@@ -1,5 +1,11 @@
+/**
+ * Controlador para la recuperación y cambio de contraseña de usuarios.
+ * Maneja la lógica para validar la identidad mediante preguntas de seguridad
+ * y permite actualizar la contraseña en el sistema.
+ *
+ * Autor: Carlos Andrés Cajas Tapia
+ */
 package ec.edu.ec.poo.controller;
-
 
 import ec.edu.ec.poo.dao.UsuarioDAO;
 import ec.edu.ec.poo.modelo.RespuestaSeguridad;
@@ -14,20 +20,39 @@ import java.util.Random;
 
 public class ContrasenaController {
 
+    /** DAO encargado de la gestión de usuarios */
     private final UsuarioDAO usuarioDAO;
+
+    /** Manejador para cambiar los textos de la interfaz según el idioma */
     private final MensajeInternacionalizacionHandler mensaje;
 
+    /** Usuario actualmente en proceso de recuperación de contraseña */
     private Usuario usuarioActual;
+
+    /** Pregunta de seguridad actual que debe responder el usuario */
     private RespuestaSeguridad preguntaActual;
+
+    /** Vista para recuperar cuenta mediante preguntas de seguridad */
     private RecuperarCuentaView recuperarCuentaView;
 
+    /** Vista para establecer la nueva contraseña */
     private NuevaContrasenaView nuevaContrasenaView;
 
+    /**
+     * Constructor del controlador encargado de la lógica de recuperación de contraseña.
+     * @param usuarioDAO DAO para acceso y manipulación de datos de usuarios.
+     * @param mensaje Manejador para la internacionalización de mensajes.
+     */
     public ContrasenaController(UsuarioDAO usuarioDAO, MensajeInternacionalizacionHandler mensaje) {
         this.usuarioDAO = usuarioDAO;
         this.mensaje = mensaje;
     }
 
+    /**
+     * Cambia el idioma actual de todas las vistas asociadas a este controlador.
+     * @param lang Código de idioma (ejemplo: "es", "en")
+     * @param country Código de país (ejemplo: "EC", "US")
+     */
     public void cambiarIdiomaVistas(String lang, String country) {
         if (recuperarCuentaView != null) {
             recuperarCuentaView.getMensaje().setLenguaje(lang, country);
@@ -39,60 +64,72 @@ public class ContrasenaController {
         }
     }
 
+    /**
+     * Inicia el proceso completo de recuperación de contraseña:
+     * 1. Verifica existencia del usuario mediante ID y nombre.
+     * 2. Valida la respuesta a una pregunta de seguridad aleatoria.
+     * 3. Permite establecer una nueva contraseña con confirmación.
+     */
     public void iniciarRecuperacion() {
         recuperarCuentaView = new RecuperarCuentaView(mensaje);
 
+        // Paso 1: Validar el usuario
         recuperarCuentaView.getBtnValidarUsuario().addActionListener(e -> {
             String id = recuperarCuentaView.getTxtId().getText().trim();
             String nombre = recuperarCuentaView.getTxtNombre().getText().trim();
 
+            // Buscar usuario por ID
             Usuario usuario = usuarioDAO.buscarPorUsername(id);
             if (usuario == null || !usuario.getNombre().equalsIgnoreCase(nombre)) {
                 recuperarCuentaView.mostrarMensaje("usuario.no.encontrado");
                 return;
             }
-
             this.usuarioActual = usuario;
 
+            // Validar que tenga mínimo 3 preguntas de seguridad
             List<RespuestaSeguridad> respuestas = usuario.getRespuestasSeguridad();
             if (respuestas == null || respuestas.size() < 3) {
                 recuperarCuentaView.mostrarMensaje("error.intentos.superados");
                 return;
             }
 
+            // Elegir una pregunta de seguridad al azar
             this.preguntaActual = respuestas.get(new Random().nextInt(respuestas.size()));
             recuperarCuentaView.setPreguntaActual(preguntaActual);
             recuperarCuentaView.getLblPregunta().setText(preguntaActual.getPregunta().getTexto());
         });
 
+        // Paso 2: Validar respuesta a la pregunta de seguridad
         recuperarCuentaView.getBtnValidarPregunta().addActionListener(e -> {
             String respuesta = recuperarCuentaView.getTxtRespuesta().getText().trim();
             if (preguntaActual.getRespuesta().equalsIgnoreCase(respuesta)) {
                 recuperarCuentaView.mostrarMensaje("respuesta.correcta");
 
+                // Mostrar ventana para nueva contraseña
                 nuevaContrasenaView = new NuevaContrasenaView(mensaje);
                 nuevaContrasenaView.setVisible(true);
 
+                // Aceptar nueva contraseña
                 nuevaContrasenaView.getBtnAceptar().addActionListener(a -> {
                     String nueva = new String(nuevaContrasenaView.getTxtNueva().getPassword());
                     String confirmar = new String(nuevaContrasenaView.getTxtConfirmar().getPassword());
 
+                    // Validaciones de campos
                     if (nueva.isEmpty() || confirmar.isEmpty()) {
                         nuevaContrasenaView.mostrarMensaje("error.campos.vacios");
                         return;
                     }
-
                     if (!nueva.equals(confirmar)) {
                         nuevaContrasenaView.mostrarMensaje("error.contrasena.no.coincide");
                         return;
                     }
 
+                    // Confirmación final
                     int confirm = JOptionPane.showConfirmDialog(
                             nuevaContrasenaView,
                             mensaje.get("mensaje.confirmar.cambio"),
                             mensaje.get("titulo.confirmacion"),
-                            JOptionPane.YES_NO_OPTION
-                    );
+                            JOptionPane.YES_NO_OPTION);
 
                     if (confirm == JOptionPane.YES_OPTION) {
                         usuarioActual.setContrasenia(nueva);
@@ -103,6 +140,7 @@ public class ContrasenaController {
                     }
                 });
 
+                // Cancelar acción de cambio de contraseña
                 nuevaContrasenaView.getBtnCancelar().addActionListener(a -> nuevaContrasenaView.dispose());
 
             } else {
@@ -110,9 +148,10 @@ public class ContrasenaController {
             }
         });
 
+        // Cancelar todo el proceso de recuperación
         recuperarCuentaView.getBtnCancelar().addActionListener(e -> recuperarCuentaView.dispose());
 
+        // Mostrar la ventana principal de recuperación
         recuperarCuentaView.setVisible(true);
     }
 }
-

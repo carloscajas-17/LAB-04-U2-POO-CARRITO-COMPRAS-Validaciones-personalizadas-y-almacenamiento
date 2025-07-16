@@ -1,5 +1,6 @@
 package ec.edu.ec.poo.controller;
 
+
 import ec.edu.ec.poo.dao.CarritoDAO;
 import ec.edu.ec.poo.dao.ProductoDAO;
 import ec.edu.ec.poo.modelo.*;
@@ -8,24 +9,56 @@ import ec.edu.ec.poo.vista.Carrito.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Locale;
 
 public class CarritoController {
 
+    /** DAO encargado de las operaciones CRUD del carrito */
     private final CarritoDAO carritoDAO;
+
+    /** DAO encargado de las operaciones CRUD de productos */
     private final ProductoDAO productoDAO;
+
+    /** Vista para añadir productos al carrito */
     private final CarritoAnadirView carritoAnadirView;
+
+    /** Vista para buscar carritos existentes */
     private final CarritoBuscarView carritoBuscarView;
+
+    /** Vista para eliminar carritos existentes */
     private final CarritoEliminarView carritoEliminarView;
+
+    /** Vista para modificar productos dentro de un carrito */
     private final CarritoModificarView carritoActualizarView;
+
+    /** Vista para listar todos los carritos según usuario o administrador */
     private final CarritoListaView carritoListaView;
+
+    /** Carrito actual en memoria para operaciones */
     private Carrito carrito;
+
+    /** Usuario actualmente autenticado que está realizando las operaciones */
     private Usuario usuarioAutenticado;
+
+    /** Código del producto seleccionado para modificación o eliminación */
     private int productoSeleccionado = -1;
 
+
+    /**
+     * Constructor principal del controlador CarritoController.
+     * Inicializa todas las vistas y DAO necesarios para la gestión del carrito.
+     * También inicializa el carrito vacío y asigna el usuario autenticado.
+     *
+     * @param carritoDAO DAO encargado de gestionar los carritos
+     * @param productoDAO DAO encargado de gestionar los productos
+     * @param carritoAnadirView Vista para añadir carritos
+     * @param carritoBuscarView Vista para buscar carritos
+     * @param carritoEliminarView Vista para eliminar carritos
+     * @param carritoActualizarView Vista para modificar carritos
+     * @param carritoListaView Vista para listar carritos
+     * @param usuarioAutenticado Usuario autenticado en sesión
+     */
     public CarritoController(CarritoDAO carritoDAO,
                              ProductoDAO productoDAO,
                              CarritoAnadirView carritoAnadirView,
@@ -44,13 +77,18 @@ public class CarritoController {
         this.usuarioAutenticado = usuarioAutenticado;
         this.carrito = new Carrito(usuarioAutenticado);
 
-        // Mostrar código y usuario
+        // Mostrar el código y el usuario directamente en la vista de añadir carrito
         carritoAnadirView.getTxtCodigoCarrito().setText(String.valueOf(carrito.getCodigo()));
         carritoAnadirView.getTxtUsuario().setText(usuarioAutenticado.getId());
 
+        // Configurar los eventos de las vistas
         configurarEventosEnVistas();
     }
 
+    /**
+     * Configura todos los listeners y eventos para las vistas del carrito.
+     * Asocia cada botón de cada vista con su respectivo método controlador.
+     */
     private void configurarEventosEnVistas() {
         carritoAnadirView.getBtnAnadir().addActionListener(e -> anadirProducto());
         carritoAnadirView.getBtnGuardar().addActionListener(e -> guardarCarrito());
@@ -120,7 +158,7 @@ public class CarritoController {
             }
         });
 
-// VER DETALLE DE CARRITO SELECCIONADO
+
         carritoListaView.getBtnDetalle().addActionListener(e -> mostrarDetalleCarrito());
 
 
@@ -133,7 +171,9 @@ public class CarritoController {
             eliminarProductoDelCarrito(fila);
         });
     }
-
+    /**
+     * Guarda el carrito en la base de datos.
+     */
     private void guardarCarrito() {
         if (this.carrito.getUsuario() == null) {
             this.carrito.setUsuario(this.usuarioAutenticado);
@@ -152,15 +192,36 @@ public class CarritoController {
         mostrarTotales();
     }
 
+    /**
+     * Agrega un producto al carrito actual desde la vista de añadir carrito.
+     * Obtiene el código del producto y la cantidad desde la vista,
+     * agrega el producto al carrito y actualiza la tabla con los productos actuales.
+     */
     private void anadirProducto() {
+        // Obtener el código del producto ingresado por el usuario
         int codigo = Integer.parseInt(carritoAnadirView.getTxtCodigo().getText());
+
+        // Buscar el producto en el DAO usando el código
         Producto producto = productoDAO.buscarPorCodigo(codigo);
+
+        // Obtener la cantidad seleccionada en el combo box
         int cantidad = Integer.parseInt(carritoAnadirView.getCbxCantidad().getSelectedItem().toString());
+
+        // Agregar el producto y cantidad al carrito actual
         carrito.agregarProducto(producto, cantidad);
+
+        // Actualizar la tabla con los productos agregados al carrito
         cargarProductos();
+
+        // Mostrar el total actualizado (subtotal, IVA y total)
         mostrarTotales();
     }
 
+    /**
+     * Carga los productos actuales del carrito en la tabla de la vista CarritoAnadirView.
+     * Recorre todos los ítems agregados al carrito, formatea precios y totales
+     * según el idioma seleccionado, y actualiza la tabla visualmente.
+     */
     private void cargarProductos() {
         Locale locale = carritoAnadirView.getMensajeInternacionalizacion().getLocale();
         List<ItemCarrito> items = carrito.obtenerItems();
@@ -177,7 +238,9 @@ public class CarritoController {
             });
         }
     }
-
+    /**
+     * Muestra los totales del carrito (subtotal, IVA y total) en la vista.
+     */
     private void mostrarTotales() {
         Locale locale = carritoAnadirView.getMensajeInternacionalizacion().getLocale();
         String subtotal = FormateadorUtils.formatearMoneda(carrito.calcularSubtotal(), locale);
@@ -188,7 +251,9 @@ public class CarritoController {
         carritoAnadirView.getTxtIva().setText(iva);
         carritoAnadirView.getTxtTotal().setText(total);
     }
-
+    /**
+     * Limpia los campos del formulario de añadir productos al carrito.
+     */
     private void limpiarDatos() {
         carritoAnadirView.getTxtCodigo().setText("");
         carritoAnadirView.getTxtNombre().setText("");
@@ -198,7 +263,10 @@ public class CarritoController {
         carritoAnadirView.getTxtIva().setText("$0.00");
         carritoAnadirView.getTxtTotal().setText("$0.00");
     }
-
+    /**
+     * Modifica la cantidad de un producto desde la vista de añadir carrito.
+     * @param fila posición del producto en la tabla
+     */
     private void modificarProductoDesdeAnadir(int fila) {
         int codigo = (int) carritoAnadirView.getTblProductos().getValueAt(fila, 0);
         String input = JOptionPane.showInputDialog(carritoAnadirView, "Ingrese nueva cantidad:");
@@ -211,15 +279,19 @@ public class CarritoController {
             carritoAnadirView.mostrarMensaje("Cantidad inválida");
         }
     }
-
+    /**
+     * Elimina un producto del carrito desde la vista añadir carrito.
+     * @param fila posición del producto en la tabla
+     */
     private void eliminarProductoDesdeAnadir(int fila) {
         int codigo = (int) carritoAnadirView.getTblProductos().getValueAt(fila, 0);
         carrito.eliminarProducto(codigo);
         cargarProductos();
         mostrarTotales();
     }
-
-    // Métodos para la ventana "CarritoBuscarView"
+    /**
+     * Busca un carrito por código desde la vista buscar carrito y muestra sus productos.
+     */
     private void buscarCarritoPorCodigo() {
         int codigo = Integer.parseInt(carritoBuscarView.getTxtCodigo().getText());
         carrito = carritoDAO.buscarPorCodigo(codigo);
@@ -233,7 +305,10 @@ public class CarritoController {
             carritoBuscarView.getTxtTotal().setText(String.format("$%,.2f", carrito.calcularTotal()));
         }
     }
-
+    /**
+     * Muestra los productos de un carrito en la vista buscar carrito.
+     * @param carrito carrito buscado
+     */
     private void mostrarProductosEnCarrito(Carrito carrito) {
         DefaultTableModel modelo = (DefaultTableModel) carritoBuscarView.getTblProducto().getModel();
         modelo.setRowCount(0);
@@ -255,7 +330,9 @@ public class CarritoController {
             });
         }
     }
-
+    /**
+     * Limpia los campos y tabla de la vista buscar carrito.
+     */
     private void limpiarCampos() {
         DefaultTableModel modelo = (DefaultTableModel) carritoBuscarView.getTblProducto().getModel();
         modelo.setRowCount(0);
@@ -264,8 +341,9 @@ public class CarritoController {
         carritoBuscarView.getTxtIva().setText("");
         carritoBuscarView.getTxtTotal().setText("");
     }
-
-    // Métodos para la ventana "CarritoEliminarView"
+    /**
+     * Busca un carrito para eliminarlo y muestra sus datos.
+     */
     private void buscarCarritoParaEliminar() {
         int codigo = Integer.parseInt(carritoEliminarView.getTxtCodigo().getText());
         carrito = carritoDAO.buscarPorCodigo(codigo);
@@ -277,7 +355,9 @@ public class CarritoController {
             carritoEliminarView.getBtnEliminar().setEnabled(true);
         }
     }
-
+    /**
+     * Elimina un carrito luego de confirmación.
+     */
     private void eliminarCarrito() {
         int codigo = Integer.parseInt(carritoEliminarView.getTxtCodigo().getText());
         carrito = carritoDAO.buscarPorCodigo(codigo);
@@ -295,7 +375,10 @@ public class CarritoController {
             limpiarCamposEliminar();
         }
     }
-
+    /**
+     * Muestra los detalles del carrito en la vista eliminar carrito.
+     * @param carrito carrito encontrado
+     */
     private void mostrarDetallesCarrito(Carrito carrito) {
         DefaultTableModel modelo = (DefaultTableModel) carritoEliminarView.getTblProducto().getModel();
         modelo.setRowCount(0);
@@ -312,7 +395,9 @@ public class CarritoController {
         carritoEliminarView.getTxtIva().setText(String.format("$%,.2f", carrito.calcularIVA()));
         carritoEliminarView.getTxtTotal().setText(String.format("$%,.2f", carrito.calcularTotal()));
     }
-
+    /**
+     * Limpia los campos de la vista eliminar carrito.
+     */
     private void limpiarCamposEliminar() {
         DefaultTableModel modelo = (DefaultTableModel) carritoEliminarView.getTblProducto().getModel();
         modelo.setRowCount(0);
@@ -322,8 +407,9 @@ public class CarritoController {
         carritoEliminarView.getTxtTotal().setText("");
         carritoEliminarView.getBtnEliminar().setEnabled(false);
     }
-
-    // Métodos para la ventana "CarritoActualizarView"
+    /**
+     * Busca un carrito para modificarlo desde la vista actualizar carrito.
+     */
     private void buscarCarritoModificar() {
         int codigo = Integer.parseInt(carritoActualizarView.getTxtCodigoC().getText());
         carrito = carritoDAO.buscarPorCodigo(codigo);
@@ -336,6 +422,9 @@ public class CarritoController {
             actualizarTotales();
         }
     }
+    /**
+     * Busca un producto para agregarlo al carrito desde la vista actualizar carrito.
+     */
 
     private void buscarProductoModificar() {
         int codigo = Integer.parseInt(carritoActualizarView.getTxtCodigoP().getText());
@@ -347,7 +436,9 @@ public class CarritoController {
             productoSeleccionado = codigo;
         }
     }
-
+    /**
+     * Agrega un producto al carrito desde la vista actualizar carrito.
+     */
     private void agregarProductoAlCarrito() {
         Producto producto = productoDAO.buscarPorCodigo(productoSeleccionado);
         carrito.agregarProducto(producto, 1);
@@ -356,21 +447,29 @@ public class CarritoController {
         productoSeleccionado = -1;
         carritoActualizarView.getTxtCodigoP().setText("");
     }
-
+    /**
+     * Modifica la cantidad de un producto en el carrito desde la vista actualizar carrito.
+     * @param fila fila seleccionada
+     */
     private void modificarProductoEnCarrito(int fila) {
         int nuevaCantidad = carritoActualizarView.getCantidadEnFila(fila);
         int codigo = carritoActualizarView.getCodigoProductoEnFila(fila);
         carrito.modificarCantidadProducto(codigo, nuevaCantidad);
         actualizarTotales();
     }
-
+    /**
+     * Elimina un producto del carrito desde la vista actualizar carrito.
+     * @param fila fila seleccionada
+     */
     private void eliminarProductoDelCarrito(int fila) {
         int codigo = carritoActualizarView.getCodigoProductoEnFila(fila);
         carrito.eliminarProducto(codigo);
         cargarProductosEnTabla();
         actualizarTotales();
     }
-
+    /**
+     * Guarda los cambios del carrito luego de ser modificado.
+     */
     private void guardarCambios() {
         carritoDAO.actualizar(carrito);
         carritoActualizarView.mostrarMensaje("Carrito actualizado correctamente");
@@ -379,7 +478,9 @@ public class CarritoController {
         carritoActualizarView.getTxtCodigoP().setText("");
         productoSeleccionado = -1;
     }
-
+    /**
+     * Carga los productos del carrito en la vista actualizar carrito.
+     */
     private void cargarProductosEnTabla() {
         DefaultTableModel modelo = (DefaultTableModel) carritoActualizarView.getTblProducto().getModel();
         modelo.setRowCount(0);
@@ -395,7 +496,9 @@ public class CarritoController {
             });
         }
     }
-
+    /**
+     * Actualiza los totales del carrito mostrado en la vista actualizar carrito.
+     */
     private void actualizarTotales() {
         double subtotal = carrito.calcularSubtotal();
         double iva = carrito.calcularIVA();
@@ -404,7 +507,9 @@ public class CarritoController {
         carritoActualizarView.actualizarTotales(subtotal, iva, total);
     }
 
-    // Métodos para la ventana "CarritoListaView"
+    /**
+     * Carga todos los carritos en la vista lista carrito según el rol del usuario autenticado.
+     */
     public void cargarCarritos() {
         DefaultTableModel modelo = carritoListaView.getModelo();
         modelo.setRowCount(0);
@@ -427,6 +532,9 @@ public class CarritoController {
         }
     }
 
+    /**
+     * Muestra el detalle del carrito seleccionado desde la lista.
+     */
     private void mostrarDetalleCarrito() {
         int filaSeleccionada = carritoListaView.getTblCarrito().getSelectedRow();
 
@@ -445,6 +553,10 @@ public class CarritoController {
 
         mostrarVentanaDetalle(carrito);
     }
+    /**
+     * Muestra una ventana modal con los detalles del carrito.
+     * @param carrito carrito seleccionado
+     */
 
     private void mostrarVentanaDetalle(Carrito carrito) {
         CarritoDetalleView detalleView = new CarritoDetalleView(carritoListaView.getMensaje());
@@ -456,6 +568,12 @@ public class CarritoController {
         detalleView.setVisible(true);
     }
 
+    /**
+     * Configura los campos generales (código, usuario, fecha) en la vista detalle carrito.
+     * @param detalleView vista de detalle
+     * @param carrito carrito mostrado
+     */
+
     private void configurarCamposDetalle(CarritoDetalleView detalleView, Carrito carrito) {
         Locale locale = detalleView.getMensaje().getLocale();
 
@@ -465,6 +583,11 @@ public class CarritoController {
                 FormateadorUtils.formatearFecha(carrito.getFechaCreacion().getTime(), locale)
         );
     }
+    /**
+     * Configura la tabla de productos en la vista detalle carrito.
+     * @param detalleView vista de detalle
+     * @param carrito carrito mostrado
+     */
 
     private void configurarTablaProductos(CarritoDetalleView detalleView, Carrito carrito) {
         DefaultTableModel modelo = detalleView.getModelo();
@@ -489,6 +612,11 @@ public class CarritoController {
             });
         }
     }
+    /**
+     * Configura los totales de carrito en la vista detalle carrito.
+     * @param detalleView vista de detalle
+     * @param carrito carrito mostrado
+     */
 
     private void configurarTotalesDetalle(CarritoDetalleView detalleView, Carrito carrito) {
         Locale locale = detalleView.getMensaje().getLocale();
@@ -503,7 +631,11 @@ public class CarritoController {
                 FormateadorUtils.formatearMoneda(carrito.calcularTotal(), locale)
         );
     }
-
+    /**
+     * Cambia el idioma de todas las vistas relacionadas al carrito.
+     * @param lang código de idioma
+     * @param country código de país
+     */
     public void cambiarIdiomaVistas(String lang, String country) {
         carritoAnadirView.cambiarIdioma(lang, country);
         carritoBuscarView.cambiarIdioma(lang, country);

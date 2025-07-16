@@ -1,3 +1,9 @@
+/**
+ * Controlador para gestionar las operaciones CRUD de productos.
+ * Gestiona eventos en las vistas de producto y carrito.
+ *
+ * Autor: Carlos Andrés Cajas Tapia
+ */
 package ec.edu.ec.poo.controller;
 
 
@@ -16,13 +22,34 @@ import java.util.List;
 
 public class ProductoController {
 
+    /** DAO para acceder a los productos */
     private final ProductoDAO productoDAO;
+
+    /** Vista para añadir productos */
     private final ProductoAnadirView productoAnadirView;
+
+    /** Vista para listar productos */
     private final ProductoListaView productoListaView;
+
+    /** Vista para eliminar productos */
     private final ProductoEliminarView productoEliminarView;
+
+    /** Vista para modificar productos */
     private final ProductoModificarView productoModificarView;
+
+    /** Vista del carrito (para integración con productos) */
     private final CarritoAnadirView carritoAnadirView;
 
+    /**
+     * Constructor principal del controlador ProductoController.
+     * Inicializa vistas, DAOs y configura eventos de cada vista.
+     * @param productoDAO DAO para acceder a los productos
+     * @param productoAnadirView Vista para añadir productos
+     * @param productoListaView Vista para listar productos
+     * @param productoEliminarView Vista para eliminar productos
+     * @param productoModificarView Vista para modificar productos
+     * @param carritoAnadirView Vista del carrito para búsqueda de productos
+     */
     public ProductoController(ProductoDAO productoDAO,
                               ProductoAnadirView productoAnadirView,
                               ProductoListaView productoListaView,
@@ -43,6 +70,7 @@ public class ProductoController {
         configurarEventosCarrito(); // por si luego lo implementas
     }
 
+    /** Configura los eventos de la vista ProductoAnadirView */
     public void configurarEventosAnadir() {
         productoAnadirView.getBtnAceptar().addActionListener(new ActionListener() {
             @Override
@@ -52,6 +80,7 @@ public class ProductoController {
         });
     }
 
+    /** Configura los eventos de la vista ProductoListaView */
     public void configurarEventosLista() {
         productoListaView.getBtnListar().addActionListener(new ActionListener() {
             @Override
@@ -68,6 +97,7 @@ public class ProductoController {
         });
     }
 
+    /** Configura los eventos de la vista ProductoEliminarView */
     public void configurarEventosEliminar() {
         productoEliminarView.getBtnBuscar().addActionListener(new ActionListener() {
             @Override
@@ -84,6 +114,7 @@ public class ProductoController {
         });
     }
 
+    /** Configura los eventos de la vista ProductoModificarView */
     public void configurarEventosModificar() {
         productoModificarView.getBtnBuscar().addActionListener(new ActionListener() {
             @Override
@@ -121,6 +152,7 @@ public class ProductoController {
         });
     }
 
+    /** Configura los eventos de la vista CarritoAnadirView */
     public void configurarEventosCarrito() {
 
         carritoAnadirView.getBtnBuscar().addActionListener(new ActionListener() {
@@ -134,6 +166,7 @@ public class ProductoController {
         // carritoAnadirView.getBtnAgregar().addActionListener(...);
     }
 
+    /** Guarda un nuevo producto registrado desde la vista ProductoAnadirView */
     private void guardarProducto() {
         try {
             int codigo = Integer.parseInt(productoAnadirView.getTxtCodigo().getText());
@@ -149,12 +182,14 @@ public class ProductoController {
         }
     }
 
+    /** Busca productos por nombre y los muestra en ProductoListaView */
     private void buscarProducto() {
         String nombre = productoListaView.getTxtBuscar().getText();
         List<Producto> productosEncontrados = productoDAO.buscarPorNombre(nombre);
         productoListaView.cargarDatos(productosEncontrados);
     }
 
+    /** Busca un producto por código en la vista ProductoEliminarView */
     private void buscarProductoEliminar() {
         try {
             int codigo = Integer.parseInt(productoEliminarView.getTxtCodigo().getText());
@@ -174,6 +209,7 @@ public class ProductoController {
             productoEliminarView.mostrarMensaje("Código inválido");
         }
     }
+    /** Busca producto en ProductoModificarView */
     private void buscarProductoModificar() {
         // Corrección: Usar productoModificarView en lugar de productoEliminarView
         int codigo = Integer.parseInt(productoModificarView.getTxtCodigo().getText());
@@ -190,7 +226,9 @@ public class ProductoController {
             productoModificarView.getBtnModificar().setEnabled(false);
         }
     }
-    private void modificarProducto() {
+
+    /** Modifica un producto existente desde ProductoModificarView */
+        private void modificarProducto() {
         int codigo = Integer.parseInt(productoModificarView.getTxtCodigo().getText());
         String nombre = productoModificarView.getTxtNombre().getText().trim();
         double precio = Double.parseDouble(productoModificarView.getTxtPrecio().getText());
@@ -225,6 +263,7 @@ public class ProductoController {
         productoModificarView.getBtnModificar().setEnabled(false);
     }
 
+    /** Elimina un producto seleccionado desde ProductoEliminarView */
     private void eliminarProducto() {
         try {
             int codigo = Integer.parseInt(productoEliminarView.getTxtCodigo().getText());
@@ -256,12 +295,13 @@ public class ProductoController {
         }
     }
 
+    /** Lista todos los productos en la vista ProductoListaView */
     private void listarProductos() {
         List<Producto> productos = productoDAO.listarTodos();
         productoListaView.cargarDatos(productos);
     }
 
-
+    /** Busca un producto desde la vista del carrito por código */
     private void buscarProductoPorCodigo() {
         int codigo = Integer.parseInt(carritoAnadirView.getTxtCodigo().getText());
         Producto producto = productoDAO.buscarPorCodigo(codigo);
@@ -274,6 +314,12 @@ public class ProductoController {
             carritoAnadirView.getTxtPrecio().setText(String.valueOf(producto.getPrecio()));
         }
     }
+
+    /**
+     * Cambia el idioma de todas las vistas relacionadas con productos.
+     * @param lang Código de idioma
+     * @param country Código de país
+     */
     public void cambiarIdiomaVistas(String lang, String country) {
         if (productoAnadirView != null) productoAnadirView.cambiarIdioma(lang, country);
         if (productoListaView != null) productoListaView.cambiarIdioma(lang, country);
