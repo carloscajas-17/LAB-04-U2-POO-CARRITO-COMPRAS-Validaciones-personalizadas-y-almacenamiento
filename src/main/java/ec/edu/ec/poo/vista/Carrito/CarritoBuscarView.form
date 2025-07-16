@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="ec.edu.ec.poo.vista.Carrito.CarritoBuscarView">
+  <grid id="27dc6" binding="pnlPrincipal" layout-manager="BorderLayout" hgap="15" vgap="15">
+    <constraints>
+      <xy x="20" y="20" width="500" height="400"/>
+    </constraints>
+    <properties>
+      <background color="-2692360"/>
+    </properties>
+    <border type="none" title-justification="2">
+      <font name="Bernard MT Condensed" size="18" style="1"/>
+      <title-color color="-16777216"/>
+    </border>
+    <children>
+      <grid id="848b6" binding="pnlSuperior" layout-manager="GridLayoutManager" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints border-constraint="North"/>
+        <properties>
+          <background color="-2692360"/>
+        </properties>
+        <border type="none" title-justification="2">
+          <font name="Bernard MT Condensed" size="18" style="1"/>
+          <title-color color="-16777216"/>
+        </border>
+        <children>
+          <component id="a78ba" class="javax.swing.JLabel" binding="lblCodigo">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <font name="Courier New" size="13" style="0"/>
+              <foreground color="-16777216"/>
+              <text value="Código:"/>
+            </properties>
+          </component>
+          <component id="19b0f" class="javax.swing.JTextField" binding="txtCodigo">
+            <constraints>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="e44a8" class="javax.swing.JButton" binding="btnBuscar">
+            <constraints>
+              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-8011287"/>
+              <font name="DialogInput" size="13" style="1"/>
+              <text value="Buscar"/>
+            </properties>
+          </component>
+          <component id="9f982" class="javax.swing.JLabel" binding="lblTitulo">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <font name="Bernard MT Condensed" size="18" style="1"/>
+              <foreground color="-16777216"/>
+              <text value="BUSCAR CARRITO"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="4131b" binding="pnlCentral" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="10">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints border-constraint="Center"/>
+        <properties>
+          <background color="-2692360"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <scrollpane id="ae52c">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="3d93d" class="javax.swing.JTable" binding="tblProducto">
+                <constraints/>
+                <properties/>
+              </component>
+            </children>
+          </scrollpane>
+          <grid id="c2704" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="15" vgap="15">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="4" fill="2" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-2692360"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <component id="4db6f" class="javax.swing.JLabel" binding="lblSubtotal">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <font name="Courier New" size="13" style="0"/>
+                  <foreground color="-16777216"/>
+                  <text value="Subtotal:"/>
+                </properties>
+              </component>
+              <component id="fdda2" class="javax.swing.JTextField" binding="txtSubtotal">
+                <constraints>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                    <preferred-size width="150" height="-1"/>
+                  </grid>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="9af1" class="javax.swing.JLabel" binding="lblIva">
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <font name="Courier New" size="13" style="0"/>
+                  <foreground color="-16777216"/>
+                  <text value="IVA:"/>
+                </properties>
+              </component>
+              <component id="d7322" class="javax.swing.JTextField" binding="txtIva">
+                <constraints>
+                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                    <preferred-size width="150" height="-1"/>
+                  </grid>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="f2b6d" class="javax.swing.JLabel" binding="lblTotal">
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <font name="Courier New" size="13" style="0"/>
+                  <foreground color="-16777216"/>
+                  <text value="Total:"/>
+                </properties>
+              </component>
+              <component id="ab47b" class="javax.swing.JTextField" binding="txtTotal">
+                <constraints>
+                  <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                    <preferred-size width="150" height="-1"/>
+                  </grid>
+                </constraints>
+                <properties/>
+              </component>
+            </children>
+          </grid>
+          <component id="83727" class="javax.swing.JButton" binding="btnLimpiar">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-8011287"/>
+              <enabled value="true"/>
+              <font name="DialogInput" size="13" style="1"/>
+              <text value="Limpiar"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <vspacer id="94891">
+        <constraints border-constraint="South"/>
+      </vspacer>
+      <vspacer id="ab593">
+        <constraints border-constraint="West"/>
+      </vspacer>
+      <hspacer id="cf22d">
+        <constraints border-constraint="East"/>
+      </hspacer>
+    </children>
+  </grid>
+</form>
