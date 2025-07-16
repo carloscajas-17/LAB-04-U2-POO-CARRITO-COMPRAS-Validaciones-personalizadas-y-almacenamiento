@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="ec.edu.ec.poo.vista.Contraseña.RecuperarCuentaView">
+  <grid id="panelPrincipal" binding="panelPrincipal" layout-manager="GridLayoutManager" row-count="8" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="5" vgap="5">
+    <margin top="10" left="10" bottom="10" right="10"/>
+    <constraints>
+      <xy x="20" y="20" width="450" height="311"/>
+    </constraints>
+    <properties>
+      <background color="-6958876"/>
+    </properties>
+    <border type="none"/>
+    <children>
+      <component id="lblTitulo" class="javax.swing.JLabel" binding="lblTitulo">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="1" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Monospaced" size="20" style="3"/>
+          <foreground color="-15198184"/>
+          <text value="RECUPERAR CUENTA CONTRASEÑA"/>
+        </properties>
+      </component>
+      <component id="lblId" class="javax.swing.JLabel" binding="lblId">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="1" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="ID Usuario:"/>
+        </properties>
+      </component>
+      <component id="txtId" class="javax.swing.JTextField" binding="txtId">
+        <constraints>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="lblNombre" class="javax.swing.JLabel" binding="lblNombre">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="1" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Nombre:"/>
+        </properties>
+      </component>
+      <component id="txtNombre" class="javax.swing.JTextField" binding="txtNombre">
+        <constraints>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="lblPregunta" class="javax.swing.JLabel" binding="lblPregunta">
+        <constraints>
+          <grid row="4" column="0" row-span="1" col-span="2" vsize-policy="1" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="¿Pregunta de seguridad?"/>
+        </properties>
+      </component>
+      <component id="txtRespuesta" class="javax.swing.JTextField" binding="txtRespuesta">
+        <constraints>
+          <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="1" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="btnValidarPregunta" class="javax.swing.JButton" binding="btnValidarPregunta">
+        <constraints>
+          <grid row="6" column="0" row-span="1" col-span="2" vsize-policy="1" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Validar Pregunta"/>
+        </properties>
+      </component>
+      <component id="btnAceptar" class="javax.swing.JButton" binding="btnAceptar">
+        <constraints>
+          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Aceptar"/>
+        </properties>
+      </component>
+      <component id="btnCancelar" class="javax.swing.JButton" binding="btnCancelar">
+        <constraints>
+          <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Cancelar"/>
+        </properties>
+      </component>
+      <component id="btnValidarUsuario" class="javax.swing.JButton" binding="btnValidarUsuario">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="1" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Validar Usuario"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>
