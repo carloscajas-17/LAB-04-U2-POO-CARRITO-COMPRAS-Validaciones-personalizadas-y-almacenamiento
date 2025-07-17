@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Clase que implementat {@link PreguntaSeguridadDAO} para almacenar preguntas de seguridad
- * de forma estatica en memoria,sim persistencia externa.
+ * Clase que implementa {@link PreguntaSeguridadDAO} para almacenar preguntas de seguridad
+ * de forma estatica en memoria,sin persistencia externa.
  * <p>
- *O
- * Soporta actualizacion dinamica de idioma mediante un {@link MensajeInternacionalizacionHandler}
+ *
+ * Soporta actualización dinámica de idioma mediante un {@link MensajeInternacionalizacionHandler}
  * </p>
  */
 public class PreguntaSeguridadDAOMemoria implements PreguntaSeguridadDAO {
@@ -24,8 +24,8 @@ public class PreguntaSeguridadDAOMemoria implements PreguntaSeguridadDAO {
     private final List<PreguntaSeguridad> bancoPreguntas;
 
     /**
-     * Constructor que inicializa en banco de preguntas en idioma pr defecto (español).
-     * Contiene 10 peguntas de sguridad predefinidas,
+     * Constructor que inicializa un banco de preguntas en idioma pr defecto (español).
+     * Contiene 10 peguntas de seguridad predefinidas,
      */
     public PreguntaSeguridadDAOMemoria() {
         bancoPreguntas = new ArrayList<>();
@@ -53,12 +53,12 @@ public class PreguntaSeguridadDAOMemoria implements PreguntaSeguridadDAO {
 
 
     /**
-     * Actualiza los textos de las preguntas de seguirdad segun el idoama seleccionado.
-     * Usando el manejador de internaciolnalizacion para obtener las preguntas desde los archivos.
+     * Actualiza los textos de las preguntas de seguridad según el idoama seleccionado.
+     * Usa el manejador de internaciolnalización para obtener las preguntas desde los archivos`.properties`.
      * <p>
      *  Ejemplos de clave usada:{@code preguntas.1},{@code preguntas.2},...,{@code preguntas.10}.
 
-     * @param mensaje instancia de {@link MensajeInternacionalizacionHandler} con idiomas configurado
+     * @param mensaje instancia de {@link MensajeInternacionalizacionHandler} con idioma configurado
      */
     public void actualizarPreguntasConIdioma(MensajeInternacionalizacionHandler mensaje) {
         for (PreguntaSeguridad p : bancoPreguntas) {

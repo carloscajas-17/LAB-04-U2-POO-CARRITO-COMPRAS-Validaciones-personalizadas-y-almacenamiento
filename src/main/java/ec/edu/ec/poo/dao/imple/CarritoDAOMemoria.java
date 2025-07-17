@@ -9,26 +9,27 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Clase que implementa la Interfaz{@link CarritoDAO} utilizando una lista
+ * Clase que implementa la Interfaz {@link CarritoDAO} utilizando una lista
  * en memoria.
  */
 
 public class CarritoDAOMemoria implements CarritoDAO {
     /**
-     * Cosntructor que inicializa la lista de carritos vacios
+     * Lista que almacena todos los acarritos registrados en memoria
+     *
      */
     private List<Carrito> listaCarritos;
 
 
     /**
-     * Constructor que inicializa la lista de carritos vacio.
+     * Constructor que inicializa la lista de carritos vacía.
      */
     public CarritoDAOMemoria() {
         listaCarritos = new ArrayList<Carrito>();
     }
 
     /**
-     * Agregga un nuevo carrito a la lista en memoria
+     * Agrega un nuevo carrito a la lista en memoria
      * @param carrito el carrito a registrar
      */
     @Override
@@ -38,8 +39,8 @@ public class CarritoDAOMemoria implements CarritoDAO {
 
     /**
      * Busca un carrito por su codigo unico
-     * @param codigo codigo del carrito
-     * @return carrrito ecnontrado o {@code null} si no existe
+     * @param codigo el código del carrito
+     * @return carrrito encontrado {@code null} si no existe
      */
     @Override
     public Carrito buscarPorCodigo(int codigo) {
@@ -52,7 +53,7 @@ public class CarritoDAOMemoria implements CarritoDAO {
     }
 
     /**
-     * Busca y retorna todos los carritos asociados a un usuario especifico
+     * Busca y retorna todos los carritos asociados a un usuario específico
      * @param username ID o nombre de usuario
      * @return lista de carritos vinculados al usuario
      */
@@ -69,8 +70,8 @@ public class CarritoDAOMemoria implements CarritoDAO {
     }
 
     /**
-     * Actualiza un carrito existente buscando por su codigo.
-     * Reemplaza el carrito antiguo por el nuevo con la misma identificacion.
+     * Actualiza un carrito existente buscando por su código.
+     * Reemplaza el carrito antiguo por el nuevo con la misma identificación.
      * @param carrito carrito actualizado
      */
     @Override
@@ -84,8 +85,8 @@ public class CarritoDAOMemoria implements CarritoDAO {
     }
 
     /**
-     * Elimina un carrito de la lista en memoria segun su codigo
-     * @param codigo codigo del carrito a eliminar
+     * Elimina un carrito de la lista en memoria según su código
+     * @param codigo código del carrito a eliminar
      */
     @Override
     public void eliminar(int codigo) {
@@ -99,7 +100,7 @@ public class CarritoDAOMemoria implements CarritoDAO {
     }
 
     /**
-     * Lista todos los carritos pertenecientes a un usuario especifico
+     * Lista todos los carritos pertenecientes a un usuario específico
      * @param idUsuario ID del usuario
      * @return lista de carritos asocidos
      */
@@ -115,15 +116,10 @@ public class CarritoDAOMemoria implements CarritoDAO {
         return resultado;
     }
 
-
-
-
-
-
-
-
-
-
+    /**
+     * Retorna la lista completa de carritos registrados en memoria
+     * @return lista de todos los carritos
+     */
     @Override
     public List<Carrito> listarTodos() {
         return listaCarritos;
