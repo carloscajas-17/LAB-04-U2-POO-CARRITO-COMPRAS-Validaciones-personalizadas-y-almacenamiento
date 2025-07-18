@@ -1,8 +1,5 @@
 /**
- * Controlador para gestionar las operaciones CRUD de productos.
- * Gestiona eventos en las vistas de producto y carrito.
- *
- * Autor: Carlos Andrés Cajas Tapia
+ * Controladores principales del sistema que gestionan la lógica de negocio entre vistas y modelos.
  */
 package ec.edu.ec.poo.controller;
 
@@ -20,6 +17,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+/**
+ * Controlador encargado de gestionar todas las operaciones CRUD relacionadas con los productos.
+ * <p>
+ * Conecta las vistas gráficas del módulo Producto con el DAO correspondiente y realiza
+ * las acciones de añadir, listar, eliminar, modificar productos, incluyendo integración con carrito.
+ * También facilita la comunicación entre los módulos Producto y Carrito.
+ * </p>
+ *
+ * Este controlador sigue el patrón MVC, gestionando la lógica de negocio y la interacción con el usuario.
+ */
 public class ProductoController {
 
     /** DAO para acceder a los productos */
