@@ -1,9 +1,5 @@
 /**
- * Controlador para la recuperación y cambio de contraseña de usuarios.
- * Maneja la lógica para validar la identidad mediante preguntas de seguridad
- * y permite actualizar la contraseña en el sistema.
- *
- * Autor: Carlos Andrés Cajas Tapia
+ * Controladores principales del sistema que gestionan la lógica de negocio entre vistas y modelos.
  */
 package ec.edu.ec.poo.controller;
 
@@ -18,6 +14,18 @@ import javax.swing.*;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Controlador encargado de gestionar la lógica relacionada con la recuperación de contraseñas.
+ * <p>
+ * Permite validar la identidad del usuario mediante preguntas de seguridad y gestionar el cambio de contraseña.
+ * Facilita la comunicación entre las vistas de recuperación de cuenta y los modelos correspondientes.
+ * También soporta la actualización dinámica de idioma para las interfaces gráficas.
+ * </p>
+ *
+ * Este controlador sigue el patrón MVC, conectando la lógica de negocio del usuario con las vistas
+ * {@link RecuperarCuentaView} y {@link NuevaContrasenaView}.
+
+ */
 public class ContrasenaController {
 
     /** DAO encargado de la gestión de usuarios */
