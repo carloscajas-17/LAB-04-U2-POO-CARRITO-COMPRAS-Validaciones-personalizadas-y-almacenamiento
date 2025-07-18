@@ -51,6 +51,12 @@ public class LoginView extends JFrame {
 
     /** Panel para mostrar el título */
     private JPanel txtTitulo;
+    /**
+     * ComboBox para seleccionar el tipo de almacenamiento del sistema
+     * (por ejemplo: Memoria, Archivo Texto, Archivo Binario).
+     */
+    private JComboBox comboAlmacenamiento;
+
 
     /** Manejador de internacionalización */
     private MensajeInternacionalizacionHandler mensaje;
@@ -150,6 +156,12 @@ public class LoginView extends JFrame {
         if (idiomaSeleccionado.equals("es")) cbxIdioma.setSelectedIndex(0);
         else if (idiomaSeleccionado.equals("en")) cbxIdioma.setSelectedIndex(1);
         else if (idiomaSeleccionado.equals("fr")) cbxIdioma.setSelectedIndex(2);
+        // Cargar opciones de almacenamiento
+        comboAlmacenamiento.removeAllItems();
+        comboAlmacenamiento.addItem("MEMORIA");
+        comboAlmacenamiento.addItem("TEXTO");
+        comboAlmacenamiento.addItem("BINARIO");
+
     }
 
     /**
@@ -486,6 +498,15 @@ public class LoginView extends JFrame {
     public void mostrarMensaje(String mensajeKey) {
         JOptionPane.showMessageDialog(this, mensaje.get(mensajeKey));
     }
+
+    /**
+     * Obtiene el comboBox de opciones de almacenamiento para seleccionar entre memoria, texto o binario.
+     * @return JComboBox con opciones de almacenamiento.
+     */
+    public JComboBox getComboAlmacenamiento() {
+        return comboAlmacenamiento;
+    }
+
 
     /**
      * Limpia los campos de entrada del formulario de inicio de sesión, es decir,

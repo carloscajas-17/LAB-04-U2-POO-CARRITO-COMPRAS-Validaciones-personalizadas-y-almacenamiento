@@ -4,6 +4,8 @@
 package ec.edu.ec.poo.controller;
 
 import ec.edu.ec.poo.dao.UsuarioDAO;
+import ec.edu.ec.poo.excepciones.CamposExcepcion;
+import ec.edu.ec.poo.excepciones.ContraseniaExcepcion;
 import ec.edu.ec.poo.modelo.RespuestaSeguridad;
 import ec.edu.ec.poo.modelo.Usuario;
 import ec.edu.ec.poo.utils.MensajeInternacionalizacionHandler;
@@ -140,11 +142,17 @@ public class ContrasenaController {
                             JOptionPane.YES_NO_OPTION);
 
                     if (confirm == JOptionPane.YES_OPTION) {
-                        usuarioActual.setContrasenia(nueva);
-                        usuarioDAO.actualizar(usuarioActual);
-                        nuevaContrasenaView.mostrarMensaje("mensaje.cambio.exito");
-                        nuevaContrasenaView.dispose();
-                        recuperarCuentaView.dispose();
+                        try {
+                            usuarioActual.setContrasenia(nueva);
+                            usuarioDAO.actualizar(usuarioActual);
+                            nuevaContrasenaView.mostrarMensaje("mensaje.cambio.exito");
+                            nuevaContrasenaView.dispose();
+                            recuperarCuentaView.dispose();
+                        } catch (CamposExcepcion camposExcepcion) {
+                            nuevaContrasenaView.mostrarMensaje(camposExcepcion.getMessage());
+                        } catch (ContraseniaExcepcion contraseniaExcepcion) {
+                            nuevaContrasenaView.mostrarMensaje(contraseniaExcepcion.getMessage());
+                        }
                     }
                 });
 

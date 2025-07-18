@@ -1,8 +1,10 @@
 package ec.edu.ec.poo.vista;
 
-
 import ec.edu.ec.poo.controller.*;
-import ec.edu.ec.poo.dao.imple.*;
+import ec.edu.ec.poo.dao.imple.memoria.CarritoDAOMemoria;
+import ec.edu.ec.poo.dao.imple.memoria.PreguntaSeguridadDAOMemoria;
+import ec.edu.ec.poo.dao.imple.memoria.ProductoDAOMemoria;
+import ec.edu.ec.poo.dao.imple.memoria.UsuarioDAOMemoria;
 import ec.edu.ec.poo.modelo.*;
 import ec.edu.ec.poo.utils.MensajeInternacionalizacionHandler;
 import ec.edu.ec.poo.vista.Carrito.*;
@@ -18,7 +20,6 @@ import javax.swing.*;
  */
 public class Main {
 
-
     /** Manejador de mensajes para internacionalización */
     private static MensajeInternacionalizacionHandler mensaje;
 
@@ -28,10 +29,8 @@ public class Main {
     /** DAO en memoria para gestión de productos */
     private static ProductoDAOMemoria productoDAO;
 
-
     /** DAO en memoria para gestión de carritos */
     private static CarritoDAOMemoria carritoDAO;
-
 
     /** DAO en memoria para preguntas de seguridad */
     private static PreguntaSeguridadDAOMemoria preguntaDAO;
@@ -73,6 +72,9 @@ public class Main {
         );
 
         loginView.setVisible(true);
+
+        // ✅ Agregar aquí: configurar DAOs según almacenamiento seleccionado
+        usuarioController.configurarDAOsDesdeLogin(loginView);
 
         // 3. Esperar autenticación
         while (usuarioController.getUsuarioAutenticado() == null) {

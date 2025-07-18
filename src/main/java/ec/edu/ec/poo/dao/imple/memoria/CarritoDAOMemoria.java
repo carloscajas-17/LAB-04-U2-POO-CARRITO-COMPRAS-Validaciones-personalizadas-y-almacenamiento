@@ -1,4 +1,4 @@
-package ec.edu.ec.poo.dao.imple;
+package ec.edu.ec.poo.dao.imple.memoria;
 
 import ec.edu.ec.poo.dao.CarritoDAO;
 import ec.edu.ec.poo.modelo.Carrito;
@@ -6,7 +6,6 @@ import ec.edu.ec.poo.modelo.Carrito;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Clase que implementa la Interfaz {@link CarritoDAO} utilizando una lista

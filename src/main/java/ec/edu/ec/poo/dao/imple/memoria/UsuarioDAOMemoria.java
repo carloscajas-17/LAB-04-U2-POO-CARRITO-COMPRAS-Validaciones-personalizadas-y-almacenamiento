@@ -1,4 +1,4 @@
-package ec.edu.ec.poo.dao.imple;
+package ec.edu.ec.poo.dao.imple.memoria;
 
 
 import ec.edu.ec.poo.dao.UsuarioDAO;
@@ -25,12 +25,16 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
     public UsuarioDAOMemoria() {
         usuarios = new ArrayList<>();
 
-        // 👇 Usuarios de prueba con constructor extendido
-        crear(new Usuario("12345", "Administrador General", "12345", Rol.ADMINISTRADOR,
-                "01/01/1990", "admin@correo.com", "0987654321", "Quito"));
+        try {
+            crear(new Usuario("1234567890", "Administrador General", "Admin@123", Rol.ADMINISTRADOR,
+                    "01/01/1990", "admin@correo.com", "0987654321", "Quito"));
 
-        crear(new Usuario("telmo99", "123", "clave999", Rol.USUARIO,
-                "10/03/1999", "telmo@correo.com", "099112233", "Cuenca"));
+            crear(new Usuario("0923456789", "Telmo Cajas", "Telmo@123", Rol.USUARIO,
+                    "10/03/1999", "telmo@correo.com", "099112233", "Cuenca"));
+
+        } catch (Exception e) {
+            System.out.println("Error creando usuario de prueba: " + e.getMessage());
+        }
     }
 
     /**

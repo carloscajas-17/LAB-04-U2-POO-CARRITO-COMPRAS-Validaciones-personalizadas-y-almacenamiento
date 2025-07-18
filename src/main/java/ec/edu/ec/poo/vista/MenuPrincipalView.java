@@ -1,6 +1,10 @@
 package ec.edu.ec.poo.vista;
 
 
+import ec.edu.ec.poo.dao.imple.memoria.CarritoDAOMemoria;
+import ec.edu.ec.poo.dao.imple.memoria.PreguntaSeguridadDAOMemoria;
+import ec.edu.ec.poo.dao.imple.memoria.ProductoDAOMemoria;
+import ec.edu.ec.poo.dao.imple.memoria.UsuarioDAOMemoria;
 import ec.edu.ec.poo.utils.MensajeInternacionalizacionHandler;
 
 import javax.swing.*;
@@ -166,10 +170,10 @@ public class MenuPrincipalView extends JFrame {
                     var nuevoMensaje = new MensajeInternacionalizacionHandler(mensaje.getLocale().getLanguage(), mensaje.getLocale().getCountry());
 
                     var loginView = new ec.edu.ec.poo.vista.Usuario.LoginView(nuevoMensaje);
-                    var usuarioDAO = new ec.edu.ec.poo.dao.imple.UsuarioDAOMemoria();
-                    var productoDAO = new ec.edu.ec.poo.dao.imple.ProductoDAOMemoria();
-                    var carritoDAO = new ec.edu.ec.poo.dao.imple.CarritoDAOMemoria();
-                    var preguntaDAO = new ec.edu.ec.poo.dao.imple.PreguntaSeguridadDAOMemoria();
+                    var usuarioDAO = new UsuarioDAOMemoria();
+                    var productoDAO = new ProductoDAOMemoria();
+                    var carritoDAO = new CarritoDAOMemoria();
+                    var preguntaDAO = new PreguntaSeguridadDAOMemoria();
 
                     var registro = new ec.edu.ec.poo.vista.Usuario.UsuarioRegistroView(nuevoMensaje);
                     var eliminar = new ec.edu.ec.poo.vista.Usuario.UsuarioEliminarView(nuevoMensaje);

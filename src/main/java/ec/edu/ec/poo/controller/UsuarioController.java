@@ -5,8 +5,23 @@ package ec.edu.ec.poo.controller;
 
 import ec.edu.ec.poo.dao.CarritoDAO;
 import ec.edu.ec.poo.dao.PreguntaSeguridadDAO;
+import ec.edu.ec.poo.dao.ProductoDAO;
 import ec.edu.ec.poo.dao.UsuarioDAO;
-import ec.edu.ec.poo.dao.imple.PreguntaSeguridadDAOMemoria;
+import ec.edu.ec.poo.dao.imple.binario.CarritoDAOArchivoBinario;
+import ec.edu.ec.poo.dao.imple.binario.PreguntaSeguridadDAOArchivoBinario;
+import ec.edu.ec.poo.dao.imple.binario.ProductoDAOArchivoBinario;
+import ec.edu.ec.poo.dao.imple.binario.UsuarioDAOArchivoBinario;
+import ec.edu.ec.poo.dao.imple.memoria.CarritoDAOMemoria;
+import ec.edu.ec.poo.dao.imple.memoria.PreguntaSeguridadDAOMemoria;
+import ec.edu.ec.poo.dao.imple.memoria.ProductoDAOMemoria;
+import ec.edu.ec.poo.dao.imple.memoria.UsuarioDAOMemoria;
+import ec.edu.ec.poo.dao.imple.texto.CarritoDAOArchivoTexto;
+import ec.edu.ec.poo.dao.imple.texto.PreguntaSeguridadDAOArchivoTexto;
+import ec.edu.ec.poo.dao.imple.texto.ProductoDAOArchivoTexto;
+import ec.edu.ec.poo.dao.imple.texto.UsuarioDAOArchivoTexto;
+import ec.edu.ec.poo.excepciones.CamposExcepcion;
+import ec.edu.ec.poo.excepciones.CedulaExcepcion;
+import ec.edu.ec.poo.excepciones.ContraseniaExcepcion;
 import ec.edu.ec.poo.modelo.*;
 import ec.edu.ec.poo.utils.FormateadorUtils;
 import ec.edu.ec.poo.utils.MensajeInternacionalizacionHandler;
@@ -39,14 +54,17 @@ public class UsuarioController {
     private Usuario usuario;
 
     /** DAO para usuarios */
-    private final UsuarioDAO usuarioDAO;
+    private  UsuarioDAO usuarioDAO;
 
     /** DAO para carritos asociados */
-    private final CarritoDAO carritoDAO;
+    private  CarritoDAO carritoDAO;
 
     /** Vista principal Login */
     private final LoginView loginView;
 
+
+    /** DAO para productos */
+    private ProductoDAO productoDAO;
 
     /** Vista para registro de usuarios */
     private final UsuarioRegistroView usuarioRegistroView;
@@ -64,7 +82,7 @@ public class UsuarioController {
 
 
     /** DAO para preguntas de seguridad */
-    private final PreguntaSeguridadDAO preguntaDAO;
+    private  PreguntaSeguridadDAO preguntaDAO;
 
 
     /** Manejador para internacionalización */
@@ -171,6 +189,9 @@ public class UsuarioController {
      * Si es válido, cierra la ventana de login.
      */
     private void autenticar() {
+        // Configurar DAOs según combo seleccionado
+        configurarDAOsDesdeLogin(loginView);
+
         String id = loginView.getTxtUsuario().getText();
         String contrasenia = loginView.getTxtContrasenia().getText();
 
@@ -182,6 +203,7 @@ public class UsuarioController {
         }
         loginView.limpiarCampos();
     }
+
 
     /**
      * Retorna el usuario autenticado.
@@ -215,81 +237,54 @@ public class UsuarioController {
         String password = new String(usuarioRegistroView.getTxtContrasenia().getPassword());
         String confirmar = new String(usuarioRegistroView.getTxtConfirmarContrasenia().getPassword());
 
-        // Validar campos obligatorios
-        if (id.isEmpty() || nombre.isEmpty() || fechaNacimiento.isEmpty() || email.isEmpty() ||
-                telefono.isEmpty() || direccion.isEmpty() || password.isEmpty() || confirmar.isEmpty()) {
-            usuarioRegistroView.mostrarMensaje("mensaje.campos.vacios");
-            return;
-        }
-
-        // Validar coincidencia de contraseñas
+        // Solo verificas contraseñas iguales porque eso no lo valida modelo
         if (!password.equals(confirmar)) {
             usuarioRegistroView.mostrarMensaje("mensaje.contrasenia.no.coincide");
             return;
         }
 
-        // Verificar si el usuario, email o teléfono ya existen
-        if (usuarioDAO.buscarPorUsername(id) != null) {
-            usuarioRegistroView.mostrarMensaje("mensaje.usuario.ya.existe");
-            return;
-        }
+        try {
+            Usuario nuevoUsuario = new Usuario(id, nombre, password, Rol.USUARIO,
+                    fechaNacimiento, email, telefono, direccion);
 
+            // Obtener preguntas seleccionadas
+            DefaultTableModel modelo = (DefaultTableModel) usuarioRegistroView.getTablaPreguntas().getModel();
+            List<RespuestaSeguridad> respuestas = new ArrayList<>();
 
-        if (usuarioDAO.buscarPorEmail(email) != null) {
-            usuarioRegistroView.mostrarMensaje("mensaje.email.ya.existe");
-            return;
-        }
+            for (int i = 0; i < modelo.getRowCount(); i++) {
+                Boolean usar = (Boolean) modelo.getValueAt(i, 0);
+                String preguntaTexto = (String) modelo.getValueAt(i, 1);
+                String respuesta = (String) modelo.getValueAt(i, 2);
 
-        if (usuarioDAO.buscarPorTelefono(telefono) != null) {
-            usuarioRegistroView.mostrarMensaje("mensaje.telefono.ya.existe");
-            return;
-        }
-
-        // Creación de nuevo usuario con datos ingresados
-        Usuario nuevoUsuario = new Usuario(id, nombre, password, Rol.USUARIO,
-                fechaNacimiento, email, telefono, direccion);
-
-        // Recopilar respuestas de seguridad seleccionadas
-        DefaultTableModel modelo = (DefaultTableModel) usuarioRegistroView.getTablaPreguntas().getModel();
-        List<RespuestaSeguridad> respuestas = new ArrayList<>();
-
-        for (int i = 0; i < modelo.getRowCount(); i++) {
-            Boolean usar = (Boolean) modelo.getValueAt(i, 0);
-            String preguntaTexto = (String) modelo.getValueAt(i, 1);
-            String respuesta = (String) modelo.getValueAt(i, 2);
-
-            if (usar != null && usar) {
-                if (respuesta == null || respuesta.trim().isEmpty()) {
-                    usuarioRegistroView.mostrarMensaje("error.respuesta.vacia");
-                    return;
-                }
-                for (PreguntaSeguridad pregunta : preguntaDAO.obtenerTodas()) {
-                    if (pregunta.getTexto().equals(preguntaTexto)) {
-                        // ✅ Aquí se agrega también el usuario a la respuesta
-                        respuestas.add(new RespuestaSeguridad(pregunta, respuesta.trim(), nuevoUsuario));
-                        break;
+                if (usar != null && usar) {
+                    if (respuesta == null || respuesta.trim().isEmpty()) {
+                        usuarioRegistroView.mostrarMensaje("error.respuesta.vacia");
+                        return;
+                    }
+                    for (PreguntaSeguridad pregunta : preguntaDAO.obtenerTodas()) {
+                        if (pregunta.getTexto().equals(preguntaTexto)) {
+                            respuestas.add(new RespuestaSeguridad(pregunta, respuesta.trim(), nuevoUsuario));
+                            break;
+                        }
                     }
                 }
             }
+
+            if (respuestas.size() < 3) {
+                usuarioRegistroView.mostrarMensaje("Debe seleccionar al menos 3 preguntas");
+                return;
+            }
+
+            nuevoUsuario.setRespuestasSeguridad(respuestas);
+            usuarioDAO.crear(nuevoUsuario);
+
+            usuarioRegistroView.mostrarMensaje("mensaje.usuario.registrado");
+            usuarioRegistroView.limpiarCampos();
+            usuarioRegistroView.dispose();
+
+        } catch (Exception e) {
+            usuarioRegistroView.mostrarMensaje(e.getMessage());
         }
-
-        // Validar que haya al menos 3 respuestas seleccionadas
-        if (respuestas.size() < 3) {
-            usuarioRegistroView.mostrarMensaje("Debe seleccionar al menos 3 preguntas");
-            return;
-        }
-
-
-        // Asociar respuestas al nuevo usuario
-        nuevoUsuario.setRespuestasSeguridad(respuestas);
-
-        // Registrar usuario en el DAO
-        usuarioDAO.crear(nuevoUsuario);
-        usuarioRegistroView.mostrarMensaje("mensaje.usuario.registrado");
-
-        // Limpiar campos y cerrar ventana de registro
-        usuarioRegistroView.limpiarCampos();
-        usuarioRegistroView.dispose();
     }
 
 
@@ -520,19 +515,16 @@ public class UsuarioController {
         String contrasenia = new String(usuarioModificarView.getTxtContrasenia().getPassword());
         String confirmacion = new String(usuarioModificarView.getTxtConfirmar().getPassword());
 
-        // Validar ID no vacío
         if (id.isEmpty()) {
             usuarioModificarView.mostrarMensaje("usuario.vacio");
             return;
         }
 
-        // Validar coincidencia de contraseñas
         if (!contrasenia.equals(confirmacion)) {
             usuarioModificarView.mostrarMensaje("contrasenias.no.coinciden");
             return;
         }
 
-        // Si no se ingresa contraseña nueva, mantener la actual
         if (contrasenia.isEmpty()) {
             contrasenia = usuario.getContrasenia();
         } else if (!validarContrasenia(contrasenia)) {
@@ -540,15 +532,19 @@ public class UsuarioController {
             return;
         }
 
-        // Actualizar usuario
-        usuario.setId(id);
-        usuario.setContrasenia(contrasenia);
+        try {
+            usuario.setId(id);
+            usuario.setContrasenia(contrasenia);
 
-        if (usuarioDAO.actualizar(usuario)) {
-            usuarioModificarView.mostrarMensaje("usuario.actualizado");
-            usuarioModificarView.dispose();
-        } else {
-            usuarioModificarView.mostrarMensaje("error.actualizar");
+            if (usuarioDAO.actualizar(usuario)) {
+                usuarioModificarView.mostrarMensaje("usuario.actualizado");
+                usuarioModificarView.dispose();
+            } else {
+                usuarioModificarView.mostrarMensaje("error.actualizar");
+            }
+
+        } catch (CamposExcepcion | CedulaExcepcion | ContraseniaExcepcion e) {
+            usuarioModificarView.mostrarMensaje(e.getMessage());
         }
     }
 
@@ -579,6 +575,33 @@ public class UsuarioController {
 
         usuarioRegistroView.getTablaPreguntas().setModel(modelo);
     }
+
+    /**
+     * Configura los DAOs según el almacenamiento seleccionado desde LoginView.
+     * @param loginView Vista de login con el combo de almacenamiento.
+     */
+    public void configurarDAOsDesdeLogin(LoginView loginView) {
+        String tipo = loginView.getComboAlmacenamiento().getSelectedItem().toString();
+
+        if (tipo.equalsIgnoreCase("MEMORIA")) {
+            this.usuarioDAO = new UsuarioDAOMemoria();
+            this.carritoDAO = new CarritoDAOMemoria();
+            this.productoDAO = new ProductoDAOMemoria();
+            this.preguntaDAO = new PreguntaSeguridadDAOMemoria();
+        } else if (tipo.equalsIgnoreCase("TEXTO")) {
+            this.usuarioDAO = new UsuarioDAOArchivoTexto("ruta/usuarios.txt");
+            this.carritoDAO = new CarritoDAOArchivoTexto("ruta/carritos.txt", usuarioDAO.listarTodos());
+            this.productoDAO = new ProductoDAOArchivoTexto("ruta/productos.txt");
+            this.preguntaDAO = new PreguntaSeguridadDAOArchivoTexto("ruta/preguntas.txt");
+        } else if (tipo.equalsIgnoreCase("BINARIO")) {
+            this.usuarioDAO = new UsuarioDAOArchivoBinario("ruta/usuarios.bin");
+            this.carritoDAO = new CarritoDAOArchivoBinario("ruta/carritos.bin");
+            this.productoDAO = new ProductoDAOArchivoBinario("ruta/productos.bin");
+            this.preguntaDAO = new PreguntaSeguridadDAOArchivoBinario("ruta/preguntas.bin");
+        }
+    }
+
+
 
 
     /**

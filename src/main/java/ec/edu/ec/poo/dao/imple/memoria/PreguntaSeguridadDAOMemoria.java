@@ -1,4 +1,4 @@
-package ec.edu.ec.poo.dao.imple;
+package ec.edu.ec.poo.dao.imple.memoria;
 
 
 import ec.edu.ec.poo.dao.PreguntaSeguridadDAO;

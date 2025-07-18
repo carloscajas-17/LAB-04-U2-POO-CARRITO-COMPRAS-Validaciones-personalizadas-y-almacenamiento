@@ -42,7 +42,7 @@ public interface CarritoDAO {
      *
      * @param carrito el carrito actualizado que reemplazará al anterior
      */
-    void actualizar(Carrito carrito);
+    boolean actualizar(Carrito carrito);
 
 
 
