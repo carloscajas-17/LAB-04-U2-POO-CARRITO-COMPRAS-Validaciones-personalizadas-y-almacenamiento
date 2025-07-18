@@ -1,3 +1,6 @@
+/**
+ * Controladores principales del sistema que gestionan la lógica de negocio entre vistas y modelos.
+ */
 package ec.edu.ec.poo.controller;
 
 import ec.edu.ec.poo.dao.CarritoDAO;
@@ -19,6 +22,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Controlador encargado de gestionar todas las operaciones relacionadas con usuarios,
+ * incluyendo autenticación, registro, eliminación, modificación, listado de usuarios
+ * y gestión de preguntas de seguridad.
+ * <p>
+ * Implementa el patrón MVC conectando las vistas gráficas del módulo Usuario con los DAOs y modelos,
+ * controlando la lógica de negocio relacionada a usuarios y sus interacciones dentro del sistema.
+ * También maneja la internacionalización de todas las vistas correspondientes.
+ * </p>
+
+ */
 public class UsuarioController {
 
     /** Usuario autenticado actualmente */
@@ -72,7 +86,7 @@ public class UsuarioController {
             UsuarioDAO usuarioDAO,
             CarritoDAO carritoDAO,
             LoginView loginView,
-            PreguntaSeguridadDAO preguntaDAO, // ✅ nuevo parámetro
+            PreguntaSeguridadDAO preguntaDAO, //  nuevo parámetro
             UsuarioRegistroView usuarioRegistroView,
             UsuarioEliminarView usuarioEliminarView,
             UsuarioListaView usuarioListaView,
@@ -81,7 +95,7 @@ public class UsuarioController {
         this.usuarioDAO = usuarioDAO;
         this.carritoDAO = carritoDAO;
         this.loginView = loginView;
-        this.preguntaDAO = preguntaDAO; // ✅ guardar el nuevo DAO
+        this.preguntaDAO = preguntaDAO; //  guardar el nuevo DAO
         this.usuarioRegistroView = usuarioRegistroView;
         this.usuarioEliminarView = usuarioEliminarView;
         this.usuarioListaView = usuarioListaView;

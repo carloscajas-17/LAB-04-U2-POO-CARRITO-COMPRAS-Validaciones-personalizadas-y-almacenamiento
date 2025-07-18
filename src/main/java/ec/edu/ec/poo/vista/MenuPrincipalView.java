@@ -7,25 +7,54 @@ import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 
+/**
+ * Clase MenuPrincipalView representa la ventana principal del sistema con
+ * funcionalidades para gestionar productos, carritos, idiomas y sesión de usuario.
+ * Integra soporte para internacionalización dinámica y un área principal con
+ * un escritorio personalizado {@link MiJDesktopPane}.
+ */
 public class MenuPrincipalView extends JFrame {
 
+    /** Manejador de internacionalización para cambiar idiomas dinámicamente */
     private MensajeInternacionalizacionHandler mensaje;
 
+    /** Barra de menús principal */
     private JMenuBar menuBar;
+
+    /** Menús principales */
     private JMenu menuProducto, menuCarrito, menuIdioma, menuSalir;
+
+    /** Ítems del menú de producto */
     private JMenuItem menuItemCrear, menuItemEliminar, menuItemActualizar, menuItemBuscar;
-    private JMenuItem menuItemCrearCarrito, menuItemBuscarCarrito, menuItemEliminarCarrito, menuItemActualizarCarrito, menuItemListarCarrito;
+
+    /** Ítems del menú de carrito */
+    private JMenuItem menuItemCrearCarrito, menuItemBuscarCarrito, menuItemEliminarCarrito,
+            menuItemActualizarCarrito, menuItemListarCarrito;
+
+    /** Ítems del menú de idiomas */
     private JMenuItem menuItemEspaniol, menuItemIngles, menuItemFrances;
+
+    /** Ítems del menú salir */
     private JMenuItem menuItemSalir, menuItemCerrarSesion;
 
+    /** Área principal con gráficos personalizados */
     private MiJDesktopPane miJDesktopPane;
 
+    /**
+     * Constructor que inicializa la ventana principal con todos los menús.
+     * @param mensaje manejador para internacionalización.
+     */
     public MenuPrincipalView(MensajeInternacionalizacionHandler mensaje) {
         this.mensaje = mensaje;
         initComponents();
         agregarListeners();
     }
 
+    /**
+     * Método que carga un ícono desde recursos.
+     * @param ruta ruta del archivo en la carpeta recursos.
+     * @return ImageIcon con el ícono escalado o null si falla la carga.
+     */
     private ImageIcon cargarIcono(String ruta) {
         URL url = getClass().getClassLoader().getResource(ruta);
         if (url != null) {
@@ -36,6 +65,9 @@ public class MenuPrincipalView extends JFrame {
         }
     }
 
+    /**
+     * Inicializa los menús, ítems, íconos y configura la ventana principal.
+     */
     private void initComponents() {
         setTitle(mensaje.get("app.titulo"));
         setSize(1000, 700);
@@ -110,6 +142,9 @@ public class MenuPrincipalView extends JFrame {
     }
 
 
+    /**
+     * Asigna los listeners para manejar cambio de idioma, cerrar sesión y salir del sistema.
+     */
     private void agregarListeners() {
         // Cambiar idioma desde el menú
         menuItemEspaniol.addActionListener(e -> cambiarIdioma("es", "EC", "imagenes/banderaes.png"));
@@ -162,6 +197,19 @@ public class MenuPrincipalView extends JFrame {
         });
     }
 
+
+    /**
+     * Cambia dinámicamente el idioma de la interfaz gráfica del sistema,
+     * actualizando todos los textos visibles en la ventana principal y sus menús.
+     * <p>
+     * Este método actualiza el título de la ventana, los menús principales,
+     * las opciones de productos, carritos, idiomas y cierre de sesión, utilizando
+     * las traducciones proporcionadas por el {@link MensajeInternacionalizacionHandler}.
+     * </p>
+     *
+     * @param lenguaje Código del lenguaje (por ejemplo: "es" para español, "en" para inglés, "fr" para francés).
+     * @param pais     Código del país correspondiente al lenguaje (por ejemplo: "EC" para Ecuador, "US" para Estados Unidos, "FR" para Francia).
+     */
     public void cambiarIdioma(String lenguaje, String pais) {
         this.mensaje.setLenguaje(lenguaje, pais);
         setTitle(mensaje.get("app.titulo"));
@@ -210,6 +258,9 @@ public class MenuPrincipalView extends JFrame {
     public JMenuItem getMenuItemCerrarSesion() { return menuItemCerrarSesion; }
 
     public MiJDesktopPane getMiJDesktopPane() { return miJDesktopPane; }
+    /**
+     * Actualiza los textos del menú luego de cambiar de idioma.
+     */
     public void cambiarIdioma(String lenguaje, String pais, String rutaIcono) {
         // Cambiar idioma (llama a la versión que solo cambia textos)
         cambiarIdioma(lenguaje, pais);
@@ -219,10 +270,17 @@ public class MenuPrincipalView extends JFrame {
     }
 
 
+    /**
+     * Oculta el menú de productos para el rol de usuario normal.
+     */
     public void deshabilitarMenusAdministrador() {
         menuProducto.setVisible(false);
     }
 
+    /**
+     * Muestra un mensaje emergente.
+     * @param mensajeClave clave de la internacionalización.
+     */
     public void mostrarMensaje(String mensajeClave) {
         JOptionPane.showMessageDialog(this, mensaje.get(mensajeClave));
     }

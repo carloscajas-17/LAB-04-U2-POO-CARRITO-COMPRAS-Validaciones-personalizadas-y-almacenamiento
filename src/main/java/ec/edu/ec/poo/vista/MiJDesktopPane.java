@@ -3,7 +3,19 @@ package ec.edu.ec.poo.vista;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Clase personalizada de {@link JDesktopPane} que dibuja un fondo gráfico temático
+ * con texto personalizado, una ilustración de celular, carrito y personaje.
+ * También incluye un toldo con franjas y un mensaje de bienvenida.
+ *
+ * Esta clase se usa como fondo principal del sistema "Tienda El Rincón Original".
+ */
 public class MiJDesktopPane extends JDesktopPane {
+    /**
+     * Método sobrescrito para pintar el fondo del panel con gráficos personalizados.
+     *
+     * @param g el contexto gráfico utilizado para pintar el componente.
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

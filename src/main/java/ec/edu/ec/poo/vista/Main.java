@@ -11,19 +11,45 @@ import ec.edu.ec.poo.vista.Usuario.*;
 
 import javax.swing.*;
 
+/**
+ * Clase principal del sistema 'Carrito de Compras'.
+ * Se encarga de inicializar los DAOs, vistas, controladores y gestionar el flujo de la aplicación.
+ * Controla la autenticación, los permisos según el rol y la internacionalización dinámica.
+ */
 public class Main {
 
-    // Variables globales
+
+    /** Manejador de mensajes para internacionalización */
     private static MensajeInternacionalizacionHandler mensaje;
+
+    /** DAO en memoria para gestión de usuarios */
     private static UsuarioDAOMemoria usuarioDAO;
+
+    /** DAO en memoria para gestión de productos */
     private static ProductoDAOMemoria productoDAO;
+
+
+    /** DAO en memoria para gestión de carritos */
     private static CarritoDAOMemoria carritoDAO;
+
+
+    /** DAO en memoria para preguntas de seguridad */
     private static PreguntaSeguridadDAOMemoria preguntaDAO;
 
+    /**
+     * Método principal. Inicia la aplicación con idioma español de Ecuador.
+     * @param args argumentos de línea de comandos (no usados)
+     */
     public static void main(String[] args) {
         iniciarAplicacion("es", "EC");
     }
 
+    /**
+     * Inicia la aplicación configurando DAOs, vistas, controladores y menú principal.
+     * Gestiona control de acceso y asignación de vistas según rol.
+     * @param lang Código de idioma ISO (ejemplo: "es")
+     * @param country Código de país ISO (ejemplo: "EC")
+     */
     public static void iniciarAplicacion(String lang, String country) {
         mensaje = new MensajeInternacionalizacionHandler(lang, country);
 
@@ -123,6 +149,11 @@ public class Main {
         });
     }
 
+    /**
+     * Muestra una ventana interna dentro del menú principal.
+     * @param frame Ventana interna a mostrar
+     * @param principal Ventana principal contenedora
+     */
     private static void mostrarVentanaInterna(JInternalFrame frame, MenuPrincipalView principal) {
         if (!frame.isVisible()) {
             principal.getMiJDesktopPane().add(frame);
@@ -137,6 +168,15 @@ public class Main {
         }
     }
 
+    /**
+     * Cambia el idioma en tiempo real actualizando controladores, vistas y menú.
+     * @param lang Idioma
+     * @param country País
+     * @param usuarioController Controlador de usuario
+     * @param productoController Controlador de producto
+     * @param carritoController Controlador de carrito
+     * @param principalView Vista principal
+     */
     private static void cambiarIdioma(String lang, String country,
                                       UsuarioController usuarioController,
                                       ProductoController productoController,
