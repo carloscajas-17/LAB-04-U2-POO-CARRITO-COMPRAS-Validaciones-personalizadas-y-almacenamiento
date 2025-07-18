@@ -189,12 +189,19 @@ public class ProductoController {
         }
     }
 
-    /** Busca productos por nombre y los muestra en ProductoListaView */
+    /** Busca un producto por nombre exacto y lo muestra en ProductoListaView */
     private void buscarProducto() {
-        String nombre = productoListaView.getTxtBuscar().getText();
-        List<Producto> productosEncontrados = productoDAO.buscarPorNombre(nombre);
-        productoListaView.cargarDatos(productosEncontrados);
+        String nombre = productoListaView.getTxtBuscar().getText().trim();
+        Producto producto = productoDAO.buscarPorNombre(nombre);
+        if (producto != null) {
+            productoListaView.cargarDatos(List.of(producto));
+        } else {
+            productoListaView.mostrarMensaje("Producto no encontrado");
+            productoListaView.cargarDatos(List.of());
+        }
     }
+
+
 
     /** Busca un producto por código en la vista ProductoEliminarView */
     private void buscarProductoEliminar() {

@@ -226,6 +226,14 @@ public class ProductoListaView extends JInternalFrame {
      *
      * @param listaProductos lista de productos a mostrar en la tabla.
      */
+    /**
+     * Muestra un mensaje emergente con la información deseada.
+     * @param mensaje texto que se mostrará en el diálogo
+     */
+    public void mostrarMensaje(String mensaje) {
+        JOptionPane.showMessageDialog(this, mensaje);
+    }
+
     public void cargarDatos(List<Producto> listaProductos) {
         modelo.setNumRows(0); // Limpia la tabla
         for (Producto producto : listaProductos) {
@@ -237,6 +245,7 @@ public class ProductoListaView extends JInternalFrame {
             modelo.addRow(fila); // Agrega la fila a la tabla
         }
     }
+
 
 }
 
