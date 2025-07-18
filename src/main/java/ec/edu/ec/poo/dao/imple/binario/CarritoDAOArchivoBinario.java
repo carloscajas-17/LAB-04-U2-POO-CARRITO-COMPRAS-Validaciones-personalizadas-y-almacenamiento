@@ -8,20 +8,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implementación completa de CarritoDAO usando archivos binarios.
- * Almacena carritos con información completa de usuario y productos.
+ * Implementación de {@link CarritoDAO} usando archivos binarios.
+ * <p>
+ * Gestiona operaciones CRUD sobre carritos de compras almacenando
+ * información completa de carrito, usuario y productos mediante serialización.
+ * </p>
  */
 public class CarritoDAOArchivoBinario implements CarritoDAO, Serializable {
 
+    /**
+     * Lista de carritos cargados desde el archivo binario.
+     */
     private final List<Carrito> carritos;
+
+    /**
+     * Ruta del archivo binario donde se almacenan los carritos.
+     */
     private final String rutaArchivo;
 
+    /**
+     * Constructor que inicializa la lista de carritos desde un archivo binario.
+     *
+     * @param rutaArchivo Ruta donde se guarda el archivo binario.
+     */
     public CarritoDAOArchivoBinario(String rutaArchivo) {
         this.rutaArchivo = rutaArchivo;
         this.carritos = new ArrayList<>();
         cargarDesdeArchivo();
     }
 
+    /**
+     * Carga los carritos desde el archivo binario usando deserialización.
+     */
     private void cargarDesdeArchivo() {
         carritos.clear();
         File archivo = new File(rutaArchivo);
@@ -41,6 +59,9 @@ public class CarritoDAOArchivoBinario implements CarritoDAO, Serializable {
         }
     }
 
+    /**
+     * Guarda la lista actualizada de carritos en el archivo binario usando serialización.
+     */
     private void guardarEnArchivo() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(rutaArchivo))) {
             oos.writeObject(carritos);
@@ -48,7 +69,12 @@ public class CarritoDAOArchivoBinario implements CarritoDAO, Serializable {
             System.out.println("Error al guardar carritos binario: " + e.getMessage());
         }
     }
-
+    /**
+     * {@inheritDoc}
+     * Crea un nuevo carrito y lo guarda en el archivo binario, siempre y cuando no exista previamente.
+     *
+     * @param carrito Carrito a registrar.
+     */
     @Override
     public void crear(Carrito carrito) {
         if (!existeCarrito(carrito.getCodigo())) {
@@ -57,6 +83,13 @@ public class CarritoDAOArchivoBinario implements CarritoDAO, Serializable {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * Busca un carrito por su código único.
+     *
+     * @param codigo Código del carrito.
+     * @return Carrito encontrado o null si no existe.
+     */
     @Override
     public Carrito buscarPorCodigo(int codigo) {
         return carritos.stream()
@@ -65,6 +98,13 @@ public class CarritoDAOArchivoBinario implements CarritoDAO, Serializable {
                 .orElse(null);
     }
 
+    /**
+     * {@inheritDoc}
+     * Busca todos los carritos de un usuario según su ID.
+     *
+     * @param username ID del usuario.
+     * @return Lista de carritos pertenecientes al usuario.
+     */
     @Override
     public List<Carrito> buscarPorUsuario(String username) {
         List<Carrito> resultado = new ArrayList<>();
@@ -77,11 +117,24 @@ public class CarritoDAOArchivoBinario implements CarritoDAO, Serializable {
         return resultado;
     }
 
+    /**
+     * {@inheritDoc}
+     * Lista todos los carritos registrados.
+     *
+     * @return Lista completa de carritos.
+     */
     @Override
     public List<Carrito> listarTodos() {
         return new ArrayList<>(carritos);
     }
 
+    /**
+     * {@inheritDoc}
+     * Lista los carritos filtrados por un usuario específico.
+     *
+     * @param idUsuario ID del usuario.
+     * @return Lista de carritos asociados al usuario.
+     */
     @Override
     public List<Carrito> listarPorUsuario(String idUsuario) {
         List<Carrito> listaPorUsuario = new ArrayList<>();
@@ -93,6 +146,13 @@ public class CarritoDAOArchivoBinario implements CarritoDAO, Serializable {
         return listaPorUsuario;
     }
 
+    /**
+     * {@inheritDoc}
+     * Actualiza un carrito si ya existe mediante su código.
+     *
+     * @param carrito Carrito con datos actualizados.
+     * @return true si se actualizó correctamente, false si no existe.
+     */
     @Override
     public boolean actualizar(Carrito carrito) {
         for (int i = 0; i < carritos.size(); i++) {
@@ -105,21 +165,46 @@ public class CarritoDAOArchivoBinario implements CarritoDAO, Serializable {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     * Elimina un carrito mediante su código único y actualiza el archivo.
+     *
+     * @param codigo Código del carrito a eliminar.
+     */
     @Override
     public void eliminar(int codigo) {
         carritos.removeIf(c -> c.getCodigo() == codigo);
         guardarEnArchivo();
     }
 
+    /**
+     * Verifica si un carrito existe mediante su código.
+     *
+     * @param codigo Código del carrito.
+     * @return true si existe, false si no.
+     */
     public boolean existeCarrito(int codigo) {
         return buscarPorCodigo(codigo) != null;
     }
 
+    /**
+     * Cuenta el total de carritos registrados.
+     *
+     * @return Cantidad total de carritos.
+     */
     public int contarCarritos() {
         return carritos.size();
     }
 
+    /**
+     * Suma el total de todos los carritos considerando sus totales calculados.
+     *
+     * @return Suma total en dinero de todos los carritos.
+     */
     public double obtenerTotalCarritos() {
         return carritos.stream().mapToDouble(Carrito::calcularTotal).sum();
     }
+
+
+
 }

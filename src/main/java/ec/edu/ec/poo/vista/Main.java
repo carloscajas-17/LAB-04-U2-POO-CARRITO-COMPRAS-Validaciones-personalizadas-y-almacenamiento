@@ -73,7 +73,7 @@ public class Main {
 
         loginView.setVisible(true);
 
-        // ✅ Agregar aquí: configurar DAOs según almacenamiento seleccionado
+        //  Agregar aquí: configurar DAOs según almacenamiento seleccionado
         usuarioController.configurarDAOsDesdeLogin(loginView);
 
         // 3. Esperar autenticación
@@ -185,7 +185,7 @@ public class Main {
                                       CarritoController carritoController,
                                       MenuPrincipalView principalView) {
 
-        // ✅ Cambiar idioma + bandera del menú
+        // Cambiar idioma + bandera del menú
         String rutaIcono = switch (lang) {
             case "es" -> "imagenes/banderaes.png";
             case "en" -> "imagenes/banderauk.png";
@@ -195,7 +195,7 @@ public class Main {
 
         principalView.cambiarIdioma(lang, country, rutaIcono);
 
-        // ✅ Cambiar idioma en controladores
+        // Cambiar idioma en controladores
         usuarioController.cambiarIdiomaVistas(lang, country);
         productoController.cambiarIdiomaVistas(lang, country);
         carritoController.cambiarIdiomaVistas(lang, country);
