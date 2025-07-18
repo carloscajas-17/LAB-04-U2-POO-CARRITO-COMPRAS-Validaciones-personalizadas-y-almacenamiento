@@ -1,3 +1,6 @@
+/**
+ * Controladores principales del sistema que gestionan la lógica de negocio entre vistas y modelos.
+ */
 package ec.edu.ec.poo.controller;
 
 
@@ -12,6 +15,15 @@ import javax.swing.table.DefaultTableModel;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Controlador principal encargado de gestionar la lógica relacionada con los carritos de compras,
+ * incluyendo operaciones CRUD (crear, buscar, actualizar y eliminar), así como el manejo de vistas gráficas.
+ * Implementa la comunicación entre las vistas y los modelos {@link Carrito} y {@link Producto}.
+ * Además, permite la gestión dinámica del idioma para todas las vistas relacionadas con carritos.
+ *
+ * <p>Este controlador sigue el patrón MVC conectando las vistas del paquete {@code vista.Carrito}
+ * con los DAOs y modelos del sistema.</p>
+ */
 public class CarritoController {
 
     /** DAO encargado de las operaciones CRUD del carrito */
