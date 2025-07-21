@@ -34,8 +34,15 @@ public class CarritoDAOMemoria implements CarritoDAO {
      */
     @Override
     public void crear(Carrito carrito) {
+        if (carrito == null) {
+            throw new IllegalArgumentException("No se puede crear un carrito nulo.");
+        }
+        if (buscarPorCodigo(carrito.getCodigo()) != null) {
+            throw new IllegalArgumentException("Ya existe un carrito con ese código.");
+        }
         listaCarritos.add(carrito);
     }
+
 
     /**
      * Busca un carrito por su código único.
@@ -122,6 +129,6 @@ public class CarritoDAOMemoria implements CarritoDAO {
      */
     @Override
     public List<Carrito> listarTodos() {
-        return listaCarritos;
+        return  new ArrayList<>(listaCarritos);
     }
 }

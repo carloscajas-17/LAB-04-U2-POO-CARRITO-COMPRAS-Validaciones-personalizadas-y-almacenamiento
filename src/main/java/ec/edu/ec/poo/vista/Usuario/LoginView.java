@@ -55,7 +55,7 @@ public class LoginView extends JFrame {
      * ComboBox para seleccionar el tipo de almacenamiento del sistema
      * (por ejemplo: Memoria, Archivo Texto, Archivo Binario).
      */
-    private JComboBox comboAlmacenamiento;
+    private JComboBox<String> cbxAlmacenamiento;
 
 
     /** Manejador de internacionalización */
@@ -113,12 +113,7 @@ public class LoginView extends JFrame {
 
     }
 
-    /**
-     * Constructor vacío (no recomendado).
-     */
-    public LoginView() {
 
-    }
 
     /**
      * Método privado para añadir listeners al comboBox para cambiar idioma.
@@ -140,7 +135,7 @@ public class LoginView extends JFrame {
     private void initComponents() {
         setContentPane(pnlPrincipal);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(300, 200);
+        setSize(600, 450);
         setLocationRelativeTo(null);
     }
 
@@ -157,10 +152,10 @@ public class LoginView extends JFrame {
         else if (idiomaSeleccionado.equals("en")) cbxIdioma.setSelectedIndex(1);
         else if (idiomaSeleccionado.equals("fr")) cbxIdioma.setSelectedIndex(2);
         // Cargar opciones de almacenamiento
-        comboAlmacenamiento.removeAllItems();
-        comboAlmacenamiento.addItem("MEMORIA");
-        comboAlmacenamiento.addItem("TEXTO");
-        comboAlmacenamiento.addItem("BINARIO");
+        cbxAlmacenamiento.removeAllItems();
+        cbxAlmacenamiento.addItem("MEMORIA");
+        cbxAlmacenamiento.addItem("TEXTO");
+        cbxAlmacenamiento.addItem("BINARIO");
 
     }
 
@@ -503,9 +498,7 @@ public class LoginView extends JFrame {
      * Obtiene el comboBox de opciones de almacenamiento para seleccionar entre memoria, texto o binario.
      * @return JComboBox con opciones de almacenamiento.
      */
-    public JComboBox getComboAlmacenamiento() {
-        return comboAlmacenamiento;
-    }
+    public JComboBox<String> getCbxAlmacenamiento() { return cbxAlmacenamiento; }
 
 
     /**

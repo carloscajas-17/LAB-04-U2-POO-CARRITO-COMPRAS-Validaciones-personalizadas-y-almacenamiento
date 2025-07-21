@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="LAB04CARRITOCOMPRAS-POO-U2-CICLO2:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/LAB04CARRITOCOMPRAS_POO_U2_CICLO2_jar</output-path>
+    <root id="archive" name="LAB04CARRITOCOMPRAS-POO-U2-CICLO2.jar">
+      <element id="module-output" name="LAB04CARRITOCOMPRAS-POO-U2-CICLO2" />
+    </root>
+  </artifact>
+</component>

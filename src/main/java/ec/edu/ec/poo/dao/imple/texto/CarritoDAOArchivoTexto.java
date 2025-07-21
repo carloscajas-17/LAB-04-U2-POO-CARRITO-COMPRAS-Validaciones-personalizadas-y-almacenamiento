@@ -1,51 +1,37 @@
+// CarritoDAOArchivoTexto.java
 package ec.edu.ec.poo.dao.imple.texto;
 
 import ec.edu.ec.poo.dao.CarritoDAO;
-import ec.edu.ec.poo.modelo.Carrito;
-import ec.edu.ec.poo.modelo.ItemCarrito;
-import ec.edu.ec.poo.modelo.Producto;
-import ec.edu.ec.poo.modelo.Usuario;
+import ec.edu.ec.poo.modelo.*;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * Implementación de la interfaz {@link CarritoDAO} utilizando archivos de texto
- * para almacenar carritos de compras asociados a usuarios y productos.
+ * Implementación de {@link CarritoDAO} que permite gestionar los carritos mediante archivos de texto.
  * <p>
- * Cada carrito se almacena en una línea con el siguiente formato:
- * codigo|fecha|idUsuario|item1;item2;...
+ * Cada carrito se guarda en el archivo de manera estructurada con los datos del carrito,
+ * productos, cantidades, y relación con el usuario. Los datos se cargan al iniciar y se
+ * actualizan automáticamente al realizar operaciones CRUD.
  * </p>
- * Donde cada item contiene: codigoProducto,nombre,precio,cantidad
  */
 public class CarritoDAOArchivoTexto implements CarritoDAO {
 
-    /**
-     * Lista de carritos cargados desde el archivo.
-     */
+    /** Lista de carritos cargados desde archivo */
     private final List<Carrito> carritos;
-
-    /**
-     * Ruta del archivo de texto donde se almacenan los carritos.
-     */
-    private final String rutaArchivo;
-
-    /**
-     * Lista de usuarios existente para asociar cada carrito.
-     */
+    /** Lista de usuarios para asociación de carritos */
     private final List<Usuario> usuarios;
-
-    /**
-     * Formateador de fecha en formato dd/MM/yyyy para guardar y leer fechas.
-     */
+    /** Ruta del archivo de almacenamiento */
+    private final String rutaArchivo;
+    /** Formato para lectura y escritura de fechas */
     private final SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
 
+
     /**
-     * Constructor que inicializa la lista de carritos desde un archivo.
-     *
-     * @param rutaArchivo Ruta del archivo donde se almacenan los carritos.
-     * @param usuarios Lista de usuarios previamente registrados.
+     * Constructor principal.
+     * @param rutaArchivo ruta donde se almacenarán los carritos.
+     * @param usuarios lista de usuarios registrados para asociar a los carritos.
      */
     public CarritoDAOArchivoTexto(String rutaArchivo, List<Usuario> usuarios) {
         this.rutaArchivo = rutaArchivo;
@@ -55,9 +41,8 @@ public class CarritoDAOArchivoTexto implements CarritoDAO {
     }
 
     /**
-     * Carga la lista de carritos desde el archivo de texto.
-     * Cada línea representa un carrito completo con sus productos.
-     * Si el archivo no existe, no se carga nada.
+     * Carga los carritos desde el archivo de texto.
+     * Si el archivo no existe, la lista de carritos permanece vacía.
      */
     private void cargarDesdeArchivo() {
         carritos.clear();
@@ -66,74 +51,70 @@ public class CarritoDAOArchivoTexto implements CarritoDAO {
         try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) {
             String linea;
             while ((linea = reader.readLine()) != null) {
-                try {
-                    Carrito carrito = convertirLineaACarrito(linea);
-                    if (carrito != null) carritos.add(carrito);
-                } catch (Exception ex) {
-                    System.out.println("Línea inválida: " + linea + " Error: " + ex.getMessage());
-                }
+                Carrito carrito = convertirLineaACarrito(linea);
+                if (carrito != null) carritos.add(carrito);
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.println("Error al cargar carritos: " + e.getMessage());
         }
     }
 
     /**
      * Convierte una línea del archivo a un objeto {@link Carrito}.
-     *
-     * @param linea Línea en formato código|fecha|usuario|items.
-     * @return El carrito creado o null si ocurre un error.
+     * @param linea línea con los datos serializados de un carrito.
+     * @return carrito reconstruido o null si hay error de lectura.
      */
     private Carrito convertirLineaACarrito(String linea) {
         try {
             String[] partes = linea.split("\\|");
-            if (partes.length < 4) return null;
+            if (partes.length < 7) return null;
 
             int codigo = Integer.parseInt(partes[0]);
-            String fechaTexto = partes[1];
-            String idUsuario = partes[2];
+            double subtotal = Double.parseDouble(partes[1]);
+            double iva = Double.parseDouble(partes[2]);
+            double total = Double.parseDouble(partes[3]);
+            Date fecha = formatoFecha.parse(partes[4]);
+            String idUsuario = partes[5];
 
             Usuario usuario = usuarios.stream()
                     .filter(u -> u.getId().equals(idUsuario))
                     .findFirst().orElse(null);
             if (usuario == null) return null;
 
-            Carrito carrito = new Carrito(usuario);
-            carrito.setCodigo(codigo);
-            Date fecha = formatoFecha.parse(fechaTexto);
-            GregorianCalendar fechaCreacion = new GregorianCalendar();
-            fechaCreacion.setTime(fecha);
-            carrito.setFechaCreacion(fechaCreacion);
-
             List<ItemCarrito> items = new ArrayList<>();
-            String[] itemsDatos = partes[3].split(";");
+            String[] itemsDatos = partes[6].split(";");
             for (String item : itemsDatos) {
                 if (!item.isBlank()) {
-                    String[] itemPartes = item.split(",");
-                    int codigoProducto = Integer.parseInt(itemPartes[0]);
-                    String nombre = itemPartes[1];
-                    double precio = Double.parseDouble(itemPartes[2]);
-                    int cantidad = Integer.parseInt(itemPartes[3]);
-                    items.add(new ItemCarrito(new Producto(codigoProducto, nombre, precio), cantidad));
+                    String[] datos = item.split(",");
+                    Producto p = new Producto(
+                            Integer.parseInt(datos[0]), datos[1], Double.parseDouble(datos[2]));
+                    int cantidad = Integer.parseInt(datos[3]);
+                    items.add(new ItemCarrito(p, cantidad));
                 }
             }
-            carrito.setItems(items);
+
+            Carrito carrito = new Carrito(usuario);
+            carrito.setCodigo(codigo);
+            carrito.setFechaCreacion(new GregorianCalendar());
+            carrito.getItems().addAll(items);
             return carrito;
         } catch (Exception e) {
-            System.out.println("Error convertir carrito: " + e.getMessage());
+            System.out.println("Error al convertir carrito: " + e.getMessage());
             return null;
         }
     }
 
     /**
-     * Guarda la lista actualizada de carritos en el archivo de texto.
-     * Sobrescribe el archivo completo en cada llamada.
+     * Guarda todos los carritos en el archivo actualizando su contenido.
      */
     private void guardarEnArchivo() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(rutaArchivo))) {
             for (Carrito carrito : carritos) {
                 StringBuilder linea = new StringBuilder();
                 linea.append(carrito.getCodigo()).append("|")
+                        .append(carrito.calcularSubtotal()).append("|")
+                        .append(carrito.calcularIVA()).append("|")
+                        .append(carrito.calcularTotal()).append("|")
                         .append(formatoFecha.format(carrito.getFecha())).append("|")
                         .append(carrito.getUsuario().getId()).append("|");
                 for (ItemCarrito item : carrito.getItems()) {
@@ -152,47 +133,42 @@ public class CarritoDAOArchivoTexto implements CarritoDAO {
     }
 
     /**
-     * Crea un nuevo carrito si no existe previamente según su código único.
+     * {@inheritDoc}
+     * Agrega un nuevo carrito al sistema.
+     * Si ya existe un carrito con el mismo código, se lanza una excepción.
+     * Al agregar un carrito se actualiza automáticamente el archivo.
      *
-     * @param carrito Objeto Carrito a registrar.
+     * @param carrito objeto carrito a registrar.
+     * @throws IllegalArgumentException si el código del carrito ya existe.
      */
     @Override
     public void crear(Carrito carrito) {
-        if (!existeCarrito(carrito.getCodigo())) {
-            carritos.add(carrito);
-            guardarEnArchivo();
+        if (buscarPorCodigo(carrito.getCodigo()) != null) {
+            throw new IllegalArgumentException("Ya existe un carrito con ese código.");
         }
+        carritos.add(carrito);
+        guardarEnArchivo();
     }
 
     /**
-     * Busca un carrito por su código identificador.
+     * {@inheritDoc}
+     * Busca un carrito por su código único.
      *
-     * @param codigo Código del carrito a buscar.
-     * @return El carrito encontrado o null si no existe.
+     * @param codigo código identificador del carrito.
+     * @return objeto {@link Carrito} encontrado o null si no existe.
      */
     @Override
     public Carrito buscarPorCodigo(int codigo) {
         return carritos.stream()
                 .filter(c -> c.getCodigo() == codigo)
-                .findFirst()
-                .orElse(null);
+                .findFirst().orElse(null);
     }
 
     /**
-     * Busca todos los carritos asociados a un usuario usando su username.
+     * {@inheritDoc}
+     * Lista todos los carritos actualmente registrados.
      *
-     * @param username ID del usuario.
-     * @return Lista de carritos del usuario.
-     */
-    @Override
-    public List<Carrito> buscarPorUsuario(String username) {
-        return listarPorUsuario(username);
-    }
-
-    /**
-     * Lista todos los carritos almacenados.
-     *
-     * @return Lista completa de carritos.
+     * @return lista con todos los carritos.
      */
     @Override
     public List<Carrito> listarTodos() {
@@ -200,10 +176,47 @@ public class CarritoDAOArchivoTexto implements CarritoDAO {
     }
 
     /**
-     * Actualiza un carrito existente buscando por su código.
+     * {@inheritDoc}
+     * Lista los carritos que pertenecen a un usuario específico.
      *
-     * @param carrito Carrito con datos actualizados.
-     * @return true si la actualización fue exitosa, false si no se encontró el carrito.
+     * @param idUsuario ID del usuario cuyos carritos se desean listar.
+     * @return lista de carritos asociados al usuario.
+     */
+    @Override
+    public List<Carrito> listarPorUsuario(String idUsuario) {
+        List<Carrito> resultado = new ArrayList<>();
+        for (Carrito carrito : carritos) {
+            if (carrito.getUsuario().getId().equals(idUsuario)) {
+                resultado.add(carrito);
+            }
+        }
+        return resultado;
+    }
+
+    /**
+     * {@inheritDoc}
+     * Busca carritos según el identificador de usuario.
+     * Es funcionalmente similar a {@link #listarPorUsuario(String)}.
+     *
+     * @param idUsuario ID del usuario.
+     * @return lista de carritos que pertenecen al usuario indicado.
+     */
+    @Override
+    public List<Carrito> buscarPorUsuario(String idUsuario) {
+        List<Carrito> resultado = new ArrayList<>();
+        for (Carrito c : carritos) {
+            if (c.getUsuario().getId().equals(idUsuario)) resultado.add(c);
+        }
+        return resultado;
+    }
+
+    /**
+     * {@inheritDoc}
+     * Actualiza un carrito existente en el sistema.
+     * Si se encuentra un carrito con el mismo código, se reemplaza su información.
+     *
+     * @param carrito carrito actualizado a almacenar.
+     * @return true si se actualizó exitosamente, false si no se encontró.
      */
     @Override
     public boolean actualizar(Carrito carrito) {
@@ -218,9 +231,11 @@ public class CarritoDAOArchivoTexto implements CarritoDAO {
     }
 
     /**
-     * Elimina un carrito según su código y actualiza el archivo.
+     * {@inheritDoc}
+     * Elimina un carrito según su código.
+     * Al eliminarlo se actualiza automáticamente el archivo de almacenamiento.
      *
-     * @param codigo Código del carrito a eliminar.
+     * @param codigo código del carrito a eliminar.
      */
     @Override
     public void eliminar(int codigo) {
@@ -228,46 +243,5 @@ public class CarritoDAOArchivoTexto implements CarritoDAO {
         guardarEnArchivo();
     }
 
-    /**
-     * Lista todos los carritos de un usuario según su ID.
-     *
-     * @param idUsuario ID del usuario.
-     * @return Lista de carritos asociados al usuario.
-     */
-    @Override
-    public List<Carrito> listarPorUsuario(String idUsuario) {
-        List<Carrito> resultado = new ArrayList<>();
-        for (Carrito carrito : carritos) {
-            if (carrito.getUsuario().getId().equals(idUsuario)) {
-                resultado.add(carrito);
-            }
-        }
-        return resultado;
-    }
-
-    /**
-     * Verifica si un carrito ya existe en la lista mediante su código.
-     *
-     * @param codigo Código del carrito.
-     * @return true si existe, false si no.
-     */
-    public boolean existeCarrito(int codigo) {
-        return buscarPorCodigo(codigo) != null;
-    }
-
-    /**
-     * Cuenta la cantidad de carritos asociados a un usuario.
-     *
-     * @param idUsuario ID del usuario.
-     * @return Número total de carritos que tiene el usuario.
-     */
-    public int contarCarritosUsuario(String idUsuario) {
-        return (int) carritos.stream()
-                .filter(c -> c.getUsuario().getId().equals(idUsuario))
-                .count();
-    }
-
-
-
-
 }
+

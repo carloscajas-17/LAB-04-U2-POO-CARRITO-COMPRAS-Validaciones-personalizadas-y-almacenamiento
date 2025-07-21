@@ -13,14 +13,13 @@ import java.util.Locale;
  */
 public class FormateadorUtils {
 
+
     /**
-     * Formatea una cantidad numérica como valor monetario según el idioma y país definidos.
+     * Formatea un número como valor monetario según la configuración regional.
      *
-     *
-     *
-     * @param cantidad monto o cantidad numérica a formatear
-     * @param locale configuración regional para formatear la moneda (idioma y país)
-     * @return una cadena formateada como valor monetario
+     * @param cantidad monto numérico a formatear
+     * @param locale configuración regional (idioma y país)
+     * @return valor formateado como moneda
      */
     public static String formatearMoneda(double cantidad, Locale locale) {
         NumberFormat formatoMoneda = NumberFormat.getCurrencyInstance(locale);

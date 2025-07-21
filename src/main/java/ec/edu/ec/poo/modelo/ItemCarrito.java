@@ -42,8 +42,10 @@ public class ItemCarrito {
      * @param cantidad nueva cantidad
      */
     public void setCantidad(int cantidad) {
+        if (cantidad <= 0) throw new IllegalArgumentException("La cantidad debe ser mayor a 0");
         this.cantidad = cantidad;
     }
+
 
     /**
      * Obtiene el producto del ítem.

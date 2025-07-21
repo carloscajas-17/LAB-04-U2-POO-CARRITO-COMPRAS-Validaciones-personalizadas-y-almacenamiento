@@ -24,34 +24,31 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
      */
     public UsuarioDAOMemoria() {
         usuarios = new ArrayList<>();
-
         try {
-            crear(new Usuario("1234567890", "Administrador General", "Admin@123", Rol.ADMINISTRADOR,
+            crear(new Usuario("0106538085", "administrador", "Adm_12", Rol.ADMINISTRADOR,
                     "01/01/1990", "admin@correo.com", "0987654321", "Quito"));
-
-            crear(new Usuario("0923456789", "Telmo Cajas", "Telmo@123", Rol.USUARIO,
-                    "10/03/1999", "telmo@correo.com", "099112233", "Cuenca"));
-
         } catch (Exception e) {
             System.out.println("Error creando usuario de prueba: " + e.getMessage());
         }
+
+
     }
 
     /**
      * Autentica un usuario verificando si existe un usario registrado con el ID  y contraseña proporcionados.
-     * @param id ID o nombre del usuario registrado.
+     * @param username ID o nombre del usuario registrado.
      * @param contrasenia Contraseña ingresada.
      * @return el objeto {@link Usuario} si las credenciales son correctas,o {@code null} si no encuntra coincidencia.
      */
     @Override
-    public Usuario autenticar(String id, String contrasenia) {
-        for (Usuario usuario : usuarios) {
-            if (usuario.getId().equals(id) && usuario.getContrasenia().equals(contrasenia)) {
-                return usuario;
-            }
+    public Usuario autenticar(String username, String contrasenia) {
+        Usuario usuario = buscarPorUsername(username);
+        if (usuario != null && usuario.getContrasenia().equals(contrasenia)) {
+            return usuario;
         }
         return null;
     }
+
 
     /**
      * Agrega un nuevo usuario a la lista de usuario en memoria.
@@ -60,10 +57,15 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
      */
     @Override
     public void crear(Usuario usuario) {
+        if (usuario == null) {
+            throw new IllegalArgumentException("No se puede crear un usuario nulo");
+        }
+        if (buscarPorUsername(usuario.getId()) != null) {
+            throw new IllegalArgumentException("El usuario con cédula ya existe");
+        }
         usuarios.add(usuario);
-        //  Solo para verificar en consola
-        System.out.println("Usuario creado: " + usuario);
     }
+
 
     /**
      * Busca un usuario en la lista de usuarios utilizando su nombre de usuario(ID).
@@ -80,6 +82,8 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
         }
         return null;
     }
+
+
 
     /**
      * Bysca un usuario en la lista de usuarios utilizando el identificador único (ID).
@@ -102,19 +106,20 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
      * Elimina un usuraio del sistema según su identificador de usuario(username).
      * Recorre la lista de usuarios y elimina el primeor que coincida con el ID proporcionado.
      * Si no encuntra el usuario, no realiza ninguna acción.
-     * @param username  el identificador único del usuario que se desea eliminar.
+     * @param id  el identificador único del usuario que se desea eliminar.
      */
     @Override
-    public void eliminar(String username) {
+    public void eliminar(String id) {
         Iterator<Usuario> iterator = usuarios.iterator();
         while (iterator.hasNext()) {
             Usuario usuario = iterator.next();
-            if (usuario.getId().equals(username)) {
+            if (usuario.getId().equals(id)) {
                 iterator.remove();
                 break;
             }
         }
     }
+
 
     /**
      * Actualiza los daots de un usurio en la lista de usuarios.
@@ -132,11 +137,12 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
             Usuario usuarioAux = usuarios.get(i);
             if (usuarioAux.getId().equals(usuario.getId())) {
                 usuarios.set(i, usuario);
-                return true; // Sí lo encontró y actualizó
+                return true;
             }
         }
-        return false; // No se encontró el usuario con ese ID
+        return false;
     }
+
 
     /**
      * Busca un suario en la lisya por su direccion de correo electrónico.
@@ -181,7 +187,8 @@ public class UsuarioDAOMemoria implements UsuarioDAO {
      */
     @Override
     public List<Usuario> listarTodos() {
-        return usuarios;
+
+        return new ArrayList<>(usuarios);
     }
 
     /**

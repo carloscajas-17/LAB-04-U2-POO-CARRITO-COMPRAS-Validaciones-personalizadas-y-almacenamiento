@@ -63,4 +63,21 @@ public class MensajeInternacionalizacionHandler {
     public Locale getLocale() {
         return locale;
     }
+
+    /**
+     * Retorna el conjunto completo de mensajes cargados en el ResourceBundle actual.
+     * <p>
+     * Este método es útil cuando se requiere acceder directamente al objeto {@link ResourceBundle}
+     * para realizar operaciones adicionales, como iterar sobre todas las claves disponibles
+     * o acceder a propiedades especiales no cubiertas por el método {@code get(String key)}.
+     * </p>
+     *
+     * @return objeto {@link ResourceBundle} que contiene todos los textos traducidos
+     * según el idioma y país configurados actualmente.
+     */
+    public ResourceBundle getMensajes() {
+        return bundle;
+    }
+
+
 }

@@ -31,8 +31,15 @@ public class ProductoDAOMemoria implements ProductoDAO {
      */
     @Override
     public void crear(Producto producto) {
+        if (producto == null) {
+            throw new IllegalArgumentException("No se puede agregar un producto nulo.");
+        }
+        if (buscarPorCodigo(producto.getCodigo()) != null) {
+            throw new IllegalArgumentException("Ya existe un producto con el mismo código.");
+        }
         productos.add(producto);
     }
+
 
     /**
      * Busca un producto según su código único.

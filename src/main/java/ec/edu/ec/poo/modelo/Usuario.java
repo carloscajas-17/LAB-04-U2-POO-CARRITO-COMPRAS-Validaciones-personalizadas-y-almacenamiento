@@ -198,11 +198,44 @@ public class Usuario {
         this.fechaNacimiento = fechaNacimiento;
     }
 
-    public void setRol(Rol rol) { this.rol = rol; }
-    public void setTelefono(String telefono) { this.telefono = telefono; }
-    public void setDireccion(String direccion) { this.direccion = direccion; }
-    public void setRespuestasSeguridad(List<RespuestaSeguridad> respuestasSeguridad) { this.respuestasSeguridad = respuestasSeguridad; }
+    /**
+     * Establece el rol del usuario.
+     *
+     * @param rol El objeto de tipo Rol que representa el rol a asignar.
+     */
+    public void setRol(Rol rol) {
+        this.rol = rol;
+    }
+    /**
+     * Asigna y valida el teléfono del usuario.
+     * Debe ser exactamente 10 dígitos numéricos.
+     * @param telefono número telefónico
+     * @throws CamposExcepcion si el campo está vacío
+     * @throws IllegalArgumentException si el formato es inválido o no tiene 10 dígitos
+     */
+    public void setTelefono(String telefono) throws CamposExcepcion {
+        if (telefono == null || telefono.isEmpty()) throw new CamposExcepcion("Teléfono");
+        if (!telefono.matches("\\d{10}")) throw new IllegalArgumentException("El teléfono debe tener exactamente 10 dígitos numéricos");
+        this.telefono = telefono;
+    }
 
+    /**
+     * Establece la dirección del usuario.
+     *
+     * @param direccion La cadena de texto que representa la dirección a asignar.
+     */
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    /**
+     * Establece la lista de respuestas de seguridad del usuario.
+     *
+     * @param respuestasSeguridad La lista de objetos de tipo RespuestaSeguridad.
+     */
+    public void setRespuestasSeguridad(List<RespuestaSeguridad> respuestasSeguridad) {
+        this.respuestasSeguridad = respuestasSeguridad;
+    }
     // ======= VALIDACIONES INTERNAS =======
 
     /**

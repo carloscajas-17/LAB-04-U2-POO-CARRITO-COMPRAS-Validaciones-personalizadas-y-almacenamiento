@@ -84,6 +84,52 @@ public class UsuarioController {
     /** DAO para preguntas de seguridad */
     private  PreguntaSeguridadDAO preguntaDAO;
 
+    /**
+     * Ruta del archivo de texto donde se almacenan los usuarios.
+     * Este archivo se utiliza cuando se selecciona almacenamiento en texto plano.
+     */
+    private static final String RUTA_USUARIO_TXT = "datos/usuarios.txt";
+
+    /**
+     * Ruta del archivo de texto donde se almacenan los carritos de compras.
+     * Formato estructurado con los datos de usuario, carrito e ítems.
+     */
+    private static final String RUTA_CARRITO_TXT = "datos/carritos.txt";
+
+    /**
+     * Ruta del archivo de texto donde se almacenan los productos disponibles en la tienda.
+     * Incluye información como código, nombre y precio.
+     */
+    private static final String RUTA_PRODUCTO_TXT = "datos/productos.txt";
+
+    /**
+     * Ruta del archivo de texto donde se almacenan las preguntas de seguridad para recuperación de contraseña.
+     */
+    private static final String RUTA_PREGUNTA_TXT = "datos/preguntas.txt";
+
+    /**
+     * Ruta del archivo binario donde se almacenan los usuarios serializados.
+     * Utilizado cuando se trabaja con almacenamiento binario.
+     */
+    private static final String RUTA_USUARIO_BIN = "datos/usuarios.bin";
+
+    /**
+     * Ruta del archivo binario donde se almacenan los carritos serializados con objetos completos.
+     */
+    private static final String RUTA_CARRITO_BIN = "datos/carritos.bin";
+
+    /**
+     * Ruta del archivo binario donde se almacenan los productos serializados.
+     */
+    private static final String RUTA_PRODUCTO_BIN = "datos/productos.bin";
+
+    /**
+     * Ruta del archivo binario donde se almacenan las preguntas de seguridad en formato binario.
+     */
+    private static final String RUTA_PREGUNTA_BIN = "datos/preguntas.bin";
+
+
+
 
     /** Manejador para internacionalización */
     private MensajeInternacionalizacionHandler mensaje;
@@ -190,7 +236,7 @@ public class UsuarioController {
      */
     private void autenticar() {
         // Configurar DAOs según combo seleccionado
-        configurarDAOsDesdeLogin(loginView);
+
 
         String id = loginView.getTxtUsuario().getText();
         String contrasenia = loginView.getTxtContrasenia().getText();
@@ -577,29 +623,48 @@ public class UsuarioController {
     }
 
     /**
-     * Configura los DAOs según el almacenamiento seleccionado desde LoginView.
-     * @param loginView Vista de login con el combo de almacenamiento.
+     * Configura los DAOs según el tipo de almacenamiento seleccionado desde la vista Login.
+     * Además, asegura que la carpeta "datos/" exista para guardar los archivos correctamente.
+     * @param loginView Vista principal de login que contiene el combo de almacenamiento.
      */
     public void configurarDAOsDesdeLogin(LoginView loginView) {
-        String tipo = loginView.getComboAlmacenamiento().getSelectedItem().toString();
+
+        crearCarpetaDatosSiNoExiste();
+
+        String tipo = loginView.getCbxAlmacenamiento().getSelectedItem().toString();
 
         if (tipo.equalsIgnoreCase("MEMORIA")) {
             this.usuarioDAO = new UsuarioDAOMemoria();
             this.carritoDAO = new CarritoDAOMemoria();
             this.productoDAO = new ProductoDAOMemoria();
             this.preguntaDAO = new PreguntaSeguridadDAOMemoria();
+
         } else if (tipo.equalsIgnoreCase("TEXTO")) {
-            this.usuarioDAO = new UsuarioDAOArchivoTexto("ruta/usuarios.txt");
-            this.carritoDAO = new CarritoDAOArchivoTexto("ruta/carritos.txt", usuarioDAO.listarTodos());
-            this.productoDAO = new ProductoDAOArchivoTexto("ruta/productos.txt");
-            this.preguntaDAO = new PreguntaSeguridadDAOArchivoTexto("ruta/preguntas.txt");
+            this.usuarioDAO = new UsuarioDAOArchivoTexto("datos/usuarios.txt");
+            this.carritoDAO = new CarritoDAOArchivoTexto("datos/carritos.txt", usuarioDAO.listarTodos());
+            this.productoDAO = new ProductoDAOArchivoTexto("datos/productos.txt");
+            this.preguntaDAO = new PreguntaSeguridadDAOArchivoTexto("datos/preguntas.txt");
+
         } else if (tipo.equalsIgnoreCase("BINARIO")) {
-            this.usuarioDAO = new UsuarioDAOArchivoBinario("ruta/usuarios.bin");
-            this.carritoDAO = new CarritoDAOArchivoBinario("ruta/carritos.bin");
-            this.productoDAO = new ProductoDAOArchivoBinario("ruta/productos.bin");
-            this.preguntaDAO = new PreguntaSeguridadDAOArchivoBinario("ruta/preguntas.bin");
+            this.usuarioDAO = new UsuarioDAOArchivoBinario("datos/usuarios.bin");
+            this.carritoDAO = new CarritoDAOArchivoBinario("datos/carritos.bin");
+            this.productoDAO = new ProductoDAOArchivoBinario("datos/productos.bin");
+            this.preguntaDAO = new PreguntaSeguridadDAOArchivoBinario("datos/preguntas.bin");
         }
     }
+
+    /**
+     * Crea la carpeta 'datos/' si no existe para garantizar almacenamiento en archivos.
+     */
+    private void crearCarpetaDatosSiNoExiste() {
+        java.io.File carpeta = new java.io.File("datos");
+        if (!carpeta.exists()) {
+            carpeta.mkdirs();
+            System.out.println("📁 Carpeta 'datos/' creada correctamente");
+        }
+    }
+
+
 
 
 
@@ -665,15 +730,15 @@ public class UsuarioController {
     public void cambiarIdiomaVistas(String lang, String country) {
         mensaje.setLenguaje(lang, country);
 
-        // ✅ Actualizar preguntas del DAO con el nuevo idioma
+        //  Actualizar preguntas del DAO con el nuevo idioma
         if (preguntaDAO instanceof PreguntaSeguridadDAOMemoria) {
             ((PreguntaSeguridadDAOMemoria) preguntaDAO).actualizarPreguntasConIdioma(mensaje);
         }
 
-        // ✅ Actualizar vistas
+        // Actualizar vistas
         if (usuarioRegistroView != null) {
             usuarioRegistroView.cambiarIdioma(lang, country);
-            cargarPreguntasTraducidas(); // ✅ usa el método correcto
+            cargarPreguntasTraducidas(); //  usa el método correcto
         }
 
         if (usuarioEliminarView != null) {
@@ -689,6 +754,46 @@ public class UsuarioController {
             usuarioModificarView.cambiarIdioma(lang, country);
         }
     }
+    /**
+     * Obtiene el DAO actualmente utilizado para gestionar usuarios.
+     * Esto permite acceder desde otras clases al DAO configurado según el almacenamiento seleccionado.
+     *
+     * @return instancia actual de UsuarioDAO (memoria, archivo texto o binario).
+     */
+    public UsuarioDAO getUsuarioDAO() {
+        return usuarioDAO;
+    }
+
+    /**
+     * Obtiene el DAO actualmente utilizado para gestionar carritos.
+     * Útil para mantener la persistencia correcta según el tipo de almacenamiento elegido.
+     *
+     * @return instancia actual de CarritoDAO (memoria, archivo texto o binario).
+     */
+    public CarritoDAO getCarritoDAO() {
+        return carritoDAO;
+    }
+
+    /**
+     * Obtiene el DAO actualmente utilizado para gestionar productos.
+     * Garantiza que otras clases utilicen el mismo DAO según la configuración dinámica.
+     *
+     * @return instancia actual de ProductoDAO (memoria, archivo texto o binario).
+     */
+    public ProductoDAO getProductoDAO() {
+        return productoDAO;
+    }
+
+    /**
+     * Obtiene el DAO actualmente utilizado para gestionar preguntas de seguridad.
+     * Es útil para mantener sincronización de almacenamiento para preguntas y respuestas.
+     *
+     * @return instancia actual de PreguntaSeguridadDAO (memoria, archivo texto o binario).
+     */
+    public PreguntaSeguridadDAO getPreguntaDAO() {
+        return preguntaDAO;
+    }
+
 
 
 

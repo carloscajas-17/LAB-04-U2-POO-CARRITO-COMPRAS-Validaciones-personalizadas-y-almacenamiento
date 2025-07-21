@@ -4,41 +4,34 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Clase personalizada de {@link JDesktopPane} que dibuja un fondo gráfico temático
- * con texto personalizado, una ilustración de celular, carrito y personaje.
- * También incluye un toldo con franjas y un mensaje de bienvenida.
- *
- * Esta clase se usa como fondo principal del sistema "Tienda El Rincón Original".
+ * JDesktopPane personalizado con fondo degradado y figura de carrito con personaje y toldo.
  */
 public class MiJDesktopPane extends JDesktopPane {
-    /**
-     * Método sobrescrito para pintar el fondo del panel con gráficos personalizados.
-     *
-     * @param g el contexto gráfico utilizado para pintar el componente.
-     */
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        int width = getWidth();
+        int height = getHeight();
+        int cx = width / 2;
+        int cy = height / 2;
 
-        int cx = getWidth() / 2;
-        int cy = getHeight() / 2;
+        // Fondo degradado
+        GradientPaint gradiente = new GradientPaint(0, 0, new Color(0, 170, 255), 0, height, new Color(0, 255, 204));
+        g2.setPaint(gradiente);
+        g2.fillRect(0, 0, width, height);
 
-        // Fondo celeste claro
-        g2.setColor(new Color(200, 230, 255));
-        g2.fillRect(0, 0, getWidth(), getHeight());
-
-        // ===== TEXTO DE FONDO =====
-        g2.setColor(new Color(0, 51, 102)); // Azul oscuro
+        // Título principal
+        g2.setColor(new Color(0, 51, 102));
         g2.setFont(new Font("SansSerif", Font.BOLD, 36));
-        String textoFondo = "TIENDA EL RINCÓN ORIGINAL";
+        String texto = "TIENDA EL RINCÓN ORIGINAL";
         FontMetrics fm = g2.getFontMetrics();
-        int textoWidth = fm.stringWidth(textoFondo);
-        g2.drawString(textoFondo, (getWidth() - textoWidth) / 2, 50);
+        int textWidth = fm.stringWidth(texto);
+        g2.drawString(texto, (width - textWidth) / 2, 50);
 
-        // ===== CELULAR =====
+        // Celular con toldo
         int phoneW = 220;
         int phoneH = 400;
         int phoneX = cx - phoneW / 2;
@@ -53,14 +46,11 @@ public class MiJDesktopPane extends JDesktopPane {
         g2.setColor(Color.WHITE);
         g2.fillRoundRect(phoneX + 10, phoneY + 60, phoneW - 20, phoneH - 80, 20, 20);
 
-        g2.setColor(Color.GRAY);
-        g2.fillOval(cx - 10, phoneY + phoneH - 15, 20, 20);
-
-        // ===== TOLDO =====
+        // Toldo tipo tienda
         int stripeWidth = 22;
-        Color[] colores = {Color.BLUE, Color.WHITE};
+        Color[] coloresToldo = {Color.BLUE, Color.WHITE};
         for (int i = 0; i < 7; i++) {
-            g2.setColor(colores[i % 2]);
+            g2.setColor(coloresToldo[i % 2]);
             g2.fillRect(phoneX + i * stripeWidth, phoneY - 30, stripeWidth, 40);
             g2.setColor(Color.BLACK);
             g2.drawRect(phoneX + i * stripeWidth, phoneY - 30, stripeWidth, 40);
@@ -69,19 +59,20 @@ public class MiJDesktopPane extends JDesktopPane {
         g2.setColor(Color.BLUE);
         g2.fillRect(phoneX, phoneY + 10, phoneW, 10);
 
-        // ===== TEXTO EN PANTALLA =====
+        // Texto dentro del celular
         g2.setColor(Color.BLACK);
         g2.setFont(new Font("SansSerif", Font.BOLD, 18));
         g2.drawString("¡Bienvenido al", phoneX + 30, phoneY + 110);
         g2.drawString("Carrito de Compras!", phoneX + 15, phoneY + 140);
 
-        // ===== CARRITO + PERSONAJE =====
+        // Carrito de compras con personaje
         int cartX = cx + 70;
         int cartY = cy + 50;
         int cartW = 100;
         int cartH = 60;
 
         g2.setStroke(new BasicStroke(3));
+        g2.setColor(Color.BLACK);
         g2.drawRoundRect(cartX, cartY, cartW, cartH, 10, 10);
         g2.drawLine(cartX - 30, cartY - 20, cartX, cartY + 10);
 
@@ -93,12 +84,12 @@ public class MiJDesktopPane extends JDesktopPane {
             g2.drawLine(x, cartY, x, cartY + cartH);
         }
 
+        // Personaje empujando el carrito
         g2.setColor(Color.BLACK);
         g2.fillOval(cartX - 80, cartY - 50, 30, 30); // Cabeza
         g2.fillRoundRect(cartX - 75, cartY - 20, 20, 50, 10, 10); // Cuerpo
         g2.fillRoundRect(cartX - 60, cartY - 10, 30, 10, 10, 10); // Brazo
-        g2.fillRoundRect(cartX - 75, cartY + 30, 15, 40, 10, 10); // Pierna
-        g2.fillRoundRect(cartX - 50, cartY + 30, 15, 30, 10, 10); // Pierna
+        g2.fillRoundRect(cartX - 75, cartY + 30, 15, 40, 10, 10); // Pierna izquierda
+        g2.fillRoundRect(cartX - 50, cartY + 30, 15, 30, 10, 10); // Pierna derecha
     }
 }
-

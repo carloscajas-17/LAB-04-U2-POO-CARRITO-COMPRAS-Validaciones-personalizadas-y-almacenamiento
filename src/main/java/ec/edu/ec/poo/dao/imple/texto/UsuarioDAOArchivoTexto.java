@@ -155,9 +155,13 @@ public class UsuarioDAOArchivoTexto implements UsuarioDAO {
      */
     @Override
     public void crear(Usuario usuario) {
+        if (buscarPorUsername(usuario.getId()) != null) {
+            throw new IllegalArgumentException("Ya existe un usuario con esa cédula.");
+        }
         usuarios.add(usuario);
         guardarEnArchivo();
     }
+
 
     /**
      * Busca un usuario por su ID (username).

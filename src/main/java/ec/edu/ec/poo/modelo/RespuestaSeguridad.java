@@ -17,6 +17,11 @@ public class RespuestaSeguridad {
     private Usuario usuario;
 
     /**
+     * Constructor vacío para inicialización simple.
+     */
+    public RespuestaSeguridad() {
+    }
+    /**
      * Constructor que inicializa la respuesta de seguridad con la pregunta asociada,
      * la respuesta del usuario y el usuario correspondiente.
      *
