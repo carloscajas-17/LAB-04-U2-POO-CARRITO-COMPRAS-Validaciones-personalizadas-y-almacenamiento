@@ -232,23 +232,26 @@ public class UsuarioController {
 
     /**
      * Autentica al usuario ingresado con ID y contraseña.
-     * Si es válido, cierra la ventana de login.
+     * Si es válido, cierra la ventana de login y retorna true.
+     * Si no es válido, muestra error y retorna false.
      */
     private void autenticar() {
-        // Configurar DAOs según combo seleccionado
-
-
-        String id = loginView.getTxtUsuario().getText();
-        String contrasenia = loginView.getTxtContrasenia().getText();
+        String id = loginView.getTxtUsuario().getText().trim();
+        String contrasenia = loginView.getTxtContrasenia().getText().trim();
 
         usuario = usuarioDAO.autenticar(id, contrasenia);
         if (usuario == null) {
             loginView.mostrarMensaje("usuario.login.error");
         } else {
             loginView.dispose();
+            System.out.println("Usuario autenticado correctamente: " + usuario.getNombre());
         }
         loginView.limpiarCampos();
     }
+
+
+
+
 
 
     /**
@@ -477,7 +480,7 @@ public class UsuarioController {
             model.addRow(new Object[]{false, p.getTexto(), ""});
         }
 
-        // ✅ Corrección aquí
+        //  Corrección aquí
         usuarioRegistroView.getTablaPreguntas().setModel(model);
     }
 
@@ -606,7 +609,7 @@ public class UsuarioController {
         ) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 0 || column == 2; // ✅ Solo checkbox y respuesta
+                return column == 0 || column == 2; //  Solo checkbox y respuesta
             }
 
             @Override

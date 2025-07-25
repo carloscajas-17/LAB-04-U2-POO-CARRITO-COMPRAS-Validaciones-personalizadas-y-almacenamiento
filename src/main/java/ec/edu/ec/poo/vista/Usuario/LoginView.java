@@ -85,12 +85,12 @@ public class LoginView extends JFrame {
         actualizarTextos();
 
         // Ícono para Iniciar Sesión
-        URL urlIniciar = LoginView.class.getClassLoader().getResource("imagenes/INICIARCESION.jpg");
+        URL urlIniciar = LoginView.class.getClassLoader().getResource("imagenes/INICIARCESION.png");
         if (urlIniciar != null) {
             ImageIcon icono = new ImageIcon(new ImageIcon(urlIniciar).getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH));
             btnIniciar.setIcon(icono);
         } else {
-            System.out.println("Error al cargar INICIARCESION.jpg");
+            System.out.println("Error al cargar INICIARCESION.png");
         }
 
          // Ícono para Registrar
@@ -112,7 +112,6 @@ public class LoginView extends JFrame {
         }
 
     }
-
 
 
     /**
@@ -152,10 +151,17 @@ public class LoginView extends JFrame {
         else if (idiomaSeleccionado.equals("en")) cbxIdioma.setSelectedIndex(1);
         else if (idiomaSeleccionado.equals("fr")) cbxIdioma.setSelectedIndex(2);
         // Cargar opciones de almacenamiento
+        int index = cbxAlmacenamiento.getSelectedIndex(); // recuerda selección actual
+
         cbxAlmacenamiento.removeAllItems();
-        cbxAlmacenamiento.addItem("MEMORIA");
-        cbxAlmacenamiento.addItem("TEXTO");
-        cbxAlmacenamiento.addItem("BINARIO");
+        cbxAlmacenamiento.addItem(mensaje.get("combo.memoria"));
+        cbxAlmacenamiento.addItem(mensaje.get("combo.texto"));
+        cbxAlmacenamiento.addItem(mensaje.get("combo.binario"));
+
+        if (index >= 0 && index < cbxAlmacenamiento.getItemCount()) {
+            cbxAlmacenamiento.setSelectedIndex(index); // vuelve a seleccionar la anterior
+        }
+
 
     }
 
@@ -172,6 +178,9 @@ public class LoginView extends JFrame {
         btnIniciar.setText(mensaje.get("iniciar"));
         btnRegistrar.setText(mensaje.get("registrar"));
         btnOlvidoContrasena.setText(mensaje.get("login.olvido_contrasena"));
+
+
+
 
         cargarDatos();
 

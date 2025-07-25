@@ -205,6 +205,7 @@ public class UsuarioDAOArchivoBinario implements UsuarioDAO, Serializable {
                 .orElse(null);
     }
 
+
     /**
      * {@inheritDoc}
      * Busca un usuario por su ID.

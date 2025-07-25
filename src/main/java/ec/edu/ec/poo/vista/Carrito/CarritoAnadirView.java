@@ -147,6 +147,8 @@ public class CarritoAnadirView extends JInternalFrame {
 
     }
 
+
+
     /**
      * Cambia dinámicamente el idioma de la interfaz gráfica de la vista CarritoAnadirView.
      * <p>
